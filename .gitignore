@@ -24,3 +24,6 @@ wordle_solver-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Word lists that were collected by third-parties and shouldn't be shared without permission
+*.txt

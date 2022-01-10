@@ -9,6 +9,7 @@ defmodule Parser do
   @spec parse_words([String.t()]) :: [String.t()]
   def parse_words(words) do
     words
+    |> Enum.reject(&String.match?(&1, ~r/[^A-z]/))
     |> Enum.map(&parse_word/1)
     |> Enum.sort()
   end

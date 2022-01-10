@@ -4,12 +4,6 @@ defmodule WordleTest do
 
   setup :wordle
 
-  describe "suggest/1" do
-    test "returns the first word on the list", %{wordle: wordle} do
-      assert Wordle.suggest(wordle) == "easy"
-    end
-  end
-
   describe "wrong_letter/2" do
     test "removes words that contain a given letter", %{wordle: wordle} do
       assert %Wordle{words: words} = Wordle.wrong_letter(wordle, "e")

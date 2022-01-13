@@ -1,5 +1,5 @@
 defmodule ParserTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Parser
 
   describe "parse_words/1" do

@@ -10,8 +10,7 @@ defmodule Language.PtBr do
   def normalize(word) do
     word
     |> String.codepoints()
-    |> Enum.map(&replace_accent/1)
-    |> Enum.join()
+    |> Enum.map_join(&replace_accent/1)
   end
 
   defp replace_accent(l) when l in @a_accents, do: "a"

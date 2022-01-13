@@ -1,5 +1,5 @@
 defmodule WordStatsTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest WordStats
 
   describe "filter_words_by_size/2" do

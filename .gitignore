@@ -27,3 +27,5 @@ wordle_solver-*.tar
 
 # Word lists that were collected by third-parties and shouldn't be shared without permission
 *.txt
+
+*.lock

@@ -1,5 +1,5 @@
 defmodule LanguageTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Language
 
   describe "normalize/2" do

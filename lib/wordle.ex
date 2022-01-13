@@ -1,24 +1,44 @@
 defmodule Wordle do
-  @type t :: %__MODULE__{}
+  @moduledoc ~S"""
+  Basic state of an wordle game. The struct in this file retains information about the game,
+  including the sorted word list, according to how likely it is to be the right word; all words that
+  have been suggested so far; the scores each letter has; and the name of the file that was used as
+  a dictionary.
+  """
 
-  defstruct [:words, :scores, :dict_file, :language, :word_size, :suggestion, attempts: 0]
+  @type t :: %Wordle{
+          words: list(binary),
+          scores: map,
+          suggestions: [binary]
+        }
 
-  def new(word_dict_filename, language, word_size) do
-    %__MODULE__{dict_file: word_dict_filename, language: language, word_size: word_size}
-    |> import_words()
-    |> calculate_scores()
-    |> sort_wordlist()
-    |> suggest()
+  defstruct [:words, suggestions: [], scores: %{}]
+
+  defmodule UnsolvableError do
+    defexception [:message]
   end
 
-  @spec feedback(t(), String.t()) :: t()
-  def feedback(wordle = %__MODULE__{suggestion: suggestion}, feedback) do
+  @spec new([binary]) :: t
+  def new(word_list) when is_list(word_list),
+    do: %Wordle{words: word_list} |> calculate_scores() |> suggest()
+
+  @spec import_words(binary, atom) :: [binary]
+  def import_words(dict_file, language) do
+    dict_file
+    |> Parser.import_dictionary()
+    |> Parser.parse_words()
+    |> Enum.map(&Language.normalize(&1, language))
+  end
+
+  @spec feedback(Wordle.t(), binary) :: Wordle.t()
+  def feedback(wordle = %Wordle{suggestions: [best_guess | _]}, feedback) do
     feedback
     |> String.codepoints()
     |> Enum.with_index()
-    |> Enum.reduce(wordle, fn {guess, pos}, acc ->
-      letter = String.at(suggestion, pos)
-      case guess do
+    |> Enum.reduce(wordle, fn {letter_feedback, pos}, acc ->
+      letter = String.at(best_guess, pos)
+
+      case letter_feedback do
         "0" -> wrong_letter(acc, letter)
         "1" -> wrong_position(acc, letter, pos)
         "2" -> right_position(acc, letter, pos)
@@ -27,54 +47,72 @@ defmodule Wordle do
     |> suggest()
   end
 
-  @spec wrong_letter(t(), String.t()) :: t()
-  def wrong_letter(wordle = %__MODULE__{words: words}, letter) do
-    words = Enum.reject(words, &String.contains?(&1, letter))
+  @spec wrong_letter(Wordle.t(), binary) :: Wordle.t()
+  def wrong_letter(wordle, letter) do
+    words = Enum.reject(wordle.words, &String.contains?(&1, letter))
 
-    %__MODULE__{wordle | words: words}
+    %Wordle{wordle | words: words}
   end
 
-  @spec wrong_position(t(), String.t(), integer()) :: t()
-  def wrong_position(wordle = %__MODULE__{words: words}, letter, position) do
+  @spec wrong_position(Wordle.t(), binary, integer) :: Wordle.t()
+  def wrong_position(wordle, letter, position) do
     words =
-      words
+      wordle.words
       |> Enum.filter(&String.contains?(&1, letter))
       |> Enum.reject(&(String.at(&1, position) == letter))
 
-    %__MODULE__{wordle | words: words}
+    %Wordle{wordle | words: words}
   end
 
-  @spec right_position(t(), String.t(), integer()) :: t()
-  def right_position(wordle = %__MODULE__{words: words}, letter, position) do
-    words = Enum.filter(words, &(String.at(&1, position) == letter))
+  @spec right_position(Wordle.t(), binary, integer) :: Wordle.t()
+  def right_position(wordle, letter, position) do
+    words = Enum.filter(wordle.words, &(String.at(&1, position) == letter))
 
-    %__MODULE__{wordle | words: words}
+    %Wordle{wordle | words: words}
   end
 
-  defp import_words(wordle = %__MODULE__{dict_file: filename, language: language}) do
-    words =
-      filename
-      |> Parser.import_dictionary()
-      |> Parser.parse_words()
-      |> Enum.map(&Language.normalize(&1, language))
+  @spec solve(Wordle.t(), binary) :: {:ok | :error, Wordle.t()}
+  def solve(wordle = %Wordle{suggestions: [suggestion | _tl]}, suggestion), do: {:ok, wordle}
+  def solve(wordle = %Wordle{words: []}, _right_word), do: {:error, wordle}
 
-    %__MODULE__{wordle | words: words}
+  def solve(wordle, right_word) do
+    feedback = build_feedback(wordle, right_word)
+
+    wordle
+    |> feedback(feedback)
+    |> solve(right_word)
   end
 
-  defp calculate_scores(wordle = %__MODULE__{words: words, word_size: word_size}) do
-    words = WordStats.filter_words_by_size(words, word_size)
-    scores = WordStats.letter_frequencies(words)
+  @spec calculate_scores(Wordle.t()) :: Wordle.t()
+  defp calculate_scores(wordle) do
+    scores = WordStats.letter_frequencies(wordle.words)
+    words = WordStats.order_by_scores(wordle.words, scores)
 
-    %__MODULE__{wordle | scores: scores, words: words}
+    %Wordle{wordle | scores: scores, words: words}
   end
 
-  defp sort_wordlist(wordle = %__MODULE__{words: words, scores: scores}) do
-    %__MODULE__{wordle | words: WordStats.order_by_scores(words, scores)}
+  @spec suggest(Wordle.t()) :: Wordle.t()
+  def suggest(wordle = %Wordle{words: []}), do: wordle
+
+  def suggest(wordle) do
+    [best_guess | _tl] = wordle.words
+
+    %Wordle{wordle | suggestions: [best_guess | wordle.suggestions]}
   end
 
-  defp suggest(wordle = %__MODULE__{words: [hd | _tl], attempts: attempts}) do
-    %__MODULE__{wordle | suggestion: hd, attempts: attempts + 1}
-  end
+  @spec build_feedback(Wordle.t(), binary) :: binary
+  defp build_feedback(wordle, right_word) do
+    [suggestion | _] = wordle.words
 
-  defp suggest(wordle = %__MODULE__{words: []}), do: %__MODULE__{wordle | suggestion: nil}
+    suggestion
+    |> String.codepoints()
+    |> Enum.with_index()
+    |> Enum.map_join(fn {letter, pos} ->
+      cond do
+        letter == String.at(right_word, pos) -> "2"
+        String.contains?(right_word, letter) -> "1"
+        true -> "0"
+      end
+    end)
+  end
 end

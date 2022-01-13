@@ -4,6 +4,55 @@ defmodule Wordle do
   including the sorted word list, according to how likely it is to be the right word; all words that
   have been suggested so far; the scores each letter has; and the name of the file that was used as
   a dictionary.
+
+  Usage:
+
+  iex> wordle = "dicts/test.txt"
+  iex> |> Parser.import_dictionary()
+  iex> |> Parser.trim()
+  iex> |> Language.normalize(:en)
+  iex> |> Parser.filter_number_of_letters(5)
+  iex> |> Parser.filter_valid()
+  iex> |> Wordle.new()
+  %Wordle{
+    scores: %{
+      "c" => 0.13333333333333333,
+      "d" => 0.06666666666666667,
+      "e" => 0.13333333333333333,
+      "f" => 0.06666666666666667,
+      "l" => 0.06666666666666667,
+      "r" => 0.06666666666666667,
+      "s" => 0.13333333333333333,
+      "t" => 0.06666666666666667,
+      "u" => 0.06666666666666667,
+      "y" => 0.06666666666666667,
+      "a" => 0.13333333333333333
+    },
+    suggestions: ["faces"],
+    words: ["faces", "clear", "study"]
+  }
+  iex> wordle
+  iex> |> Wordle.solve("study")
+  {
+    :ok,
+    %Wordle{
+      scores: %{
+        "a" => 0.13333333333333333,
+        "c" => 0.13333333333333333,
+        "d" => 0.06666666666666667,
+        "e" => 0.13333333333333333,
+        "f" => 0.06666666666666667,
+        "l" => 0.06666666666666667,
+        "r" => 0.06666666666666667,
+        "s" => 0.13333333333333333,
+        "t" => 0.06666666666666667,
+        "u" => 0.06666666666666667,
+        "y" => 0.06666666666666667
+      },
+      suggestions: ["study", "faces"],
+      words: ["study"]
+    }
+  }
   """
 
   @type t :: %Wordle{
@@ -21,14 +70,6 @@ defmodule Wordle do
   @spec new([binary]) :: t
   def new(word_list) when is_list(word_list),
     do: %Wordle{words: word_list} |> calculate_scores() |> suggest()
-
-  @spec import_words(binary, atom) :: [binary]
-  def import_words(dict_file, language) do
-    dict_file
-    |> Parser.import_dictionary()
-    |> Parser.parse_words()
-    |> Enum.map(&Language.normalize(&1, language))
-  end
 
   @spec feedback(Wordle.t(), binary) :: Wordle.t()
   def feedback(wordle = %Wordle{suggestions: [best_guess | _]}, feedback) do

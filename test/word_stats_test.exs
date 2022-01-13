@@ -2,13 +2,6 @@ defmodule WordStatsTest do
   use ExUnit.Case, async: true
   doctest WordStats
 
-  describe "filter_words_by_size/2" do
-    test "returns only words with given number of letters" do
-      words = ~w(hello hi hey test)
-      assert WordStats.filter_words_by_size(words, 3) == ["hey"]
-    end
-  end
-
   describe "letter_frequencies/1" do
     test "returns frequencies in percentage" do
       words = ~w(abcd ab ab)

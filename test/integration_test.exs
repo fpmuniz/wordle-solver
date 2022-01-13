@@ -23,9 +23,12 @@ defmodule IntegrationTest do
 
   defp wordle(context) do
     wordle =
-      "dicts/pt_br.txt"
-      |> Wordle.import_words(:pt_br)
-      |> Enum.filter(&(String.length(&1) == @letter_count))
+      "dicts/test.txt"
+      |> Parser.import_dictionary()
+      |> Parser.trim()
+      |> Parser.filter_number_of_letters(@letter_count)
+      |> Parser.filter_valid()
+      |> Language.normalize(:en)
       |> Wordle.new()
 
     context

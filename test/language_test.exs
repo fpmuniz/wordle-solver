@@ -2,25 +2,20 @@ defmodule LanguageTest do
   use ExUnit.Case, async: true
   doctest Language
 
-  describe "normalize/2" do
-    test "removes accents from portuguese-br words" do
-      word = "áâàãçéêíóôõú"
-      assert Language.normalize(word, :pt_br) == "aaaaceeiooou"
+  describe "normalize/2 with :pt_br language" do
+    test "removes accents words" do
+      words = ["áâàãçéêíóôõúÁÂÀÃÇÉÊÍÓÔÕÚ"]
+      assert Language.normalize(words, :pt_br) == ["aaaaceeiooouAAAACEEIOOOU"]
     end
 
-    test "does not change unaccented lowcase letters" do
-      word = ?a..?z |> Enum.to_list() |> List.to_string()
-      assert Language.normalize(word, :pt_br) == word
-    end
+    test "does not change unaccented letters" do
+      words =
+        ?A..?z
+        |> Enum.to_list()
+        |> to_string()
+        |> String.codepoints()
 
-    test "raises when there are uppercase characters" do
-      word = "OLA"
-      assert_raise(FunctionClauseError, fn -> Language.normalize(word, :pt_br) end)
-    end
-
-    test "raises when there are special symbols characters" do
-      word = "*(), "
-      assert_raise(FunctionClauseError, fn -> Language.normalize(word, :pt_br) end)
+      assert Language.normalize(words, :pt_br) == words
     end
   end
 end

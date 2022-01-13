@@ -1,4 +1,18 @@
 defmodule Language do
-  def normalize(word, :pt_br), do: Language.PtBr.normalize(word)
-  def normalize(word, _), do: word
+  @moduledoc ~S"""
+  Interface that allows you to convert all characters from a language into simpler ones. For
+  instance, you may want to convert accents into unaccented letters, or remove apostrophes from
+  the game. Currently only PT-BR and EN are supported.
+
+  iex> Language.normalize(["olá", "avião", "quântico"], :pt_br)
+  ["ola", "aviao", "quantico"]
+
+  iex> Language.normalize(["don't", "weren't"], :en)
+  ["dont", "werent"]
+  """
+  alias Language.{En, PtBr}
+
+  @spec normalize([binary], atom) :: [binary]
+  def normalize(words, :pt_br), do: words |> Enum.map(&PtBr.normalize/1)
+  def normalize(words, :en), do: words |> Enum.map(&En.normalize/1)
 end

@@ -1,10 +1,23 @@
 defmodule WordStats do
-  @spec filter_words_by_size([String.t()], integer) :: [String.t()]
-  def filter_words_by_size(words, size) do
-    Enum.filter(words, &(String.length(&1) == size))
-  end
+  @moduledoc ~S"""
+  This module allows you to create statistics about frequency of letters in a given list of words
+  (or even strings in general). It is mostly used by the Wordle module, but you can use it manually
+  aswell.
 
-  @spec letter_frequencies([String.t()]) :: map
+  iex> words = ["hi", "hello"]
+  iex> frequencies = WordStats.letter_frequencies(words)
+  %{
+    "e" => 0.14285714285714285,
+    "h" => 0.2857142857142857,
+    "i" => 0.14285714285714285,
+    "l" => 0.2857142857142857,
+    "o" => 0.14285714285714285
+  }
+  iex> WordStats.order_by_scores(words, frequencies)
+  ["hello", "hi"]
+  """
+
+  @spec letter_frequencies([binary]) :: map
   def letter_frequencies(words) do
     total = Enum.reduce(words, 0, fn word, acc -> acc + String.length(word) end)
 
@@ -17,7 +30,7 @@ defmodule WordStats do
     |> Map.new()
   end
 
-  @spec order_by_scores([String.t()], map()) :: [String.t()]
+  @spec order_by_scores([binary], map()) :: [binary]
   def order_by_scores(words, letter_frequencies) do
     words
     |> Enum.map(fn word ->

@@ -31,7 +31,6 @@ defmodule WordleTest do
   end
 
   describe "solve/2" do
-    @tag :wip
     test "finds given word and records attempts", %{wordle: wordle} do
       assert {:ok, wordle} = Wordle.solve(wordle, "dont")
       assert ["dont" | _] = wordle.suggestions

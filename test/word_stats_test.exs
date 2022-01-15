@@ -7,10 +7,10 @@ defmodule WordStatsTest do
       words = ~w(abcd ab ab)
 
       assert WordStats.letter_frequencies(words) == %{
-               "a" => 3 / 8,
-               "b" => 3 / 8,
-               "c" => 1 / 8,
-               "d" => 1 / 8
+               "a" => 3,
+               "b" => 3,
+               "c" => 1,
+               "d" => 1
              }
     end
   end

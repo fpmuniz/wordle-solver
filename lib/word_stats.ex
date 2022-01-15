@@ -6,28 +6,26 @@ defmodule WordStats do
 
   iex> words = ["hi", "hello"]
   iex> frequencies = WordStats.letter_frequencies(words)
-  %{
-    "e" => 0.14285714285714285,
-    "h" => 0.2857142857142857,
-    "i" => 0.14285714285714285,
-    "l" => 0.2857142857142857,
-    "o" => 0.14285714285714285
-  }
+  %{"e" => 1, "h" => 2, "i" => 1, "l" => 2, "o" => 1}
   iex> WordStats.order_by_scores(words, frequencies)
   ["hello", "hi"]
   """
 
   @spec letter_frequencies([binary]) :: map
   def letter_frequencies(words) do
-    total = Enum.reduce(words, 0, fn word, acc -> acc + String.length(word) end)
-
     words
     |> Enum.map(&get_letter_count/1)
     |> Enum.reduce(%{}, fn counts, acc ->
       Map.merge(acc, counts, fn _key, count1, count2 -> count1 + count2 end)
     end)
-    |> Enum.map(fn {letter, count} -> {letter, count / total} end)
+    |> Enum.map(fn {letter, count} -> {letter, count} end)
     |> Map.new()
+  end
+
+  @spec order_by_scores([binary]) :: [binary]
+  def order_by_scores(words) do
+    scores = letter_frequencies(words)
+    order_by_scores(words, scores)
   end
 
   @spec order_by_scores([binary], map()) :: [binary]

@@ -39,10 +39,12 @@ defmodule Wordle do
   def solve(wordlist, right_word, guesses, complement) do
     guess = best_guess(wordlist, complement)
     {guesses, feedback} = Game.guess(right_word, guess, guesses)
-    complement = Solver.complement(complement, guess)
-    wordlist = Solver.feedback(wordlist, guess, feedback)
+    complement = complement |> Solver.complement(guess) |> WordStats.order_by_scores()
 
-    solve(wordlist, right_word, guesses, complement)
+    wordlist
+    |> Solver.feedback(guess, feedback)
+    |> WordStats.order_by_scores()
+    |> solve(right_word, guesses, complement)
   end
 
   @spec feedback([binary], binary, binary) :: [binary]

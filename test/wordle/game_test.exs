@@ -1,6 +1,8 @@
 defmodule Wordle.GameTest do
   use ExUnit.Case, async: true
+
   alias Wordle.Game
+
   doctest Game
 
   describe "guess/2" do

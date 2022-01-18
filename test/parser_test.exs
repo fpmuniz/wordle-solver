@@ -2,8 +2,6 @@ defmodule ParserTest do
   use ExUnit.Case, async: true
   doctest Parser
 
-  @moduletag :wip
-
   describe "filter_number_of_letters/1" do
     test "only returns 5 letter words" do
       words = ~w(do you wanna see five letter words now)

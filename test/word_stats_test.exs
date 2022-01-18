@@ -1,5 +1,6 @@
 defmodule WordStatsTest do
   use ExUnit.Case, async: true
+
   doctest WordStats
 
   describe "letter_frequencies/1" do

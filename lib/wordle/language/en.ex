@@ -1,4 +1,4 @@
-defmodule Language.En do
+defmodule Wordle.Language.En do
   @moduledoc false
 
   @spec normalize(binary) :: binary

@@ -1,4 +1,4 @@
-defmodule Parser do
+defmodule Wordle.Parser do
   @moduledoc ~S"""
   Allows you to do low-level operations regarding the reading and parsing of a dictionary file.
 
@@ -6,7 +6,7 @@ defmodule Parser do
   words you already have. What is usually done is you import the dictionary file, and then parse it
   using the other functions contained in this file.
 
-  iex> words = Parser.import_dictionary("test")
+  iex> words = Parser.import_dictionary("dicts/test.txt")
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
   iex> Parser.downcase(words)
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "pumpkin", "texas", ""]
@@ -22,7 +22,7 @@ defmodule Parser do
 
   @spec import_dictionary(binary) :: [binary]
   def import_dictionary(dict) do
-    "dicts/#{dict}.txt"
+    dict
     |> File.read!()
     |> String.split("\n")
   end
@@ -42,11 +42,9 @@ defmodule Parser do
 
   @spec write_to_file([binary], binary) :: :ok
   def write_to_file(words, file_name) do
-    path = "dicts/#{file_name}.txt"
-
     words
     |> Enum.join("\n")
     |> String.trim()
-    |> (&File.write!(path, &1)).()
+    |> (&File.write!(file_name, &1)).()
   end
 end

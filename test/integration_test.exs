@@ -22,7 +22,7 @@ defmodule IntegrationTest do
 
   @spec full_dict_stats(binary, integer) :: %{integer => integer}
   defp full_dict_stats(dict_name, max_guesses) do
-    words = Parser.import_dictionary(dict_name)
+    words = Wordle.from_dict(dict_name).wordlist
 
     words
     |> Task.async_stream(fn right_word ->

@@ -1,4 +1,4 @@
-defmodule WordStats do
+defmodule Wordle.WordStats do
   @moduledoc ~S"""
   This module allows you to create statistics about frequency of letters in a given list of words
   (or even strings in general). It is mostly used by the Wordle module, but you can use it manually

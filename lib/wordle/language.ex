@@ -1,4 +1,4 @@
-defmodule Language do
+defmodule Wordle.Language do
   @moduledoc ~S"""
   Interface that allows you to convert all characters from a language into simpler ones. For
   instance, you may want to convert accents into unaccented letters, or remove apostrophes from
@@ -10,7 +10,7 @@ defmodule Language do
   iex> Language.normalize(["don't", "weren't"], :en)
   ["dont", "werent"]
   """
-  alias Language.{En, PtBr}
+  alias Wordle.Language.{En, PtBr}
 
   @spec normalize([binary], atom) :: [binary]
   def normalize(words, :pt_br), do: words |> Enum.map(&PtBr.normalize/1)

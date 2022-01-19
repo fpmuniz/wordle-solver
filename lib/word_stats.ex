@@ -18,7 +18,6 @@ defmodule WordStats do
     |> Enum.reduce(%{}, fn counts, acc ->
       Map.merge(acc, counts, fn _key, count1, count2 -> count1 + count2 end)
     end)
-    |> Enum.map(fn {letter, count} -> {letter, count} end)
     |> Map.new()
   end
 

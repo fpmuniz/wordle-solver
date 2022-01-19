@@ -14,17 +14,6 @@ defmodule Wordle do
 
   alias Wordle.{Game, Solver}
 
-  @spec import(:en | :pt_br, integer) :: [binary]
-  def import(language, n_letters) do
-    "dicts/#{language}.txt"
-    |> Parser.import_dictionary()
-    |> Parser.trim()
-    |> Language.normalize(language)
-    |> Parser.filter_valid()
-    |> WordStats.order_by_scores()
-    |> Parser.filter_number_of_letters(n_letters)
-  end
-
   @spec solve([binary], binary) :: {:ok | :error, [binary]}
   def solve(wordlist, right_word) do
     solve(wordlist, right_word, [], wordlist)

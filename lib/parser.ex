@@ -6,7 +6,7 @@ defmodule Parser do
   words you already have. What is usually done is you import the dictionary file, and then parse it
   using the other functions contained in this file.
 
-  iex> words = Parser.import_dictionary("dicts/test.txt")
+  iex> words = Parser.import_dictionary("test")
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
   iex> Parser.downcase(words)
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "pumpkin", "texas", ""]
@@ -21,8 +21,8 @@ defmodule Parser do
   """
 
   @spec import_dictionary(binary) :: [binary]
-  def import_dictionary(file_name) do
-    file_name
+  def import_dictionary(dict) do
+    "dicts/#{dict}.txt"
     |> File.read!()
     |> String.split("\n")
   end
@@ -39,4 +39,14 @@ defmodule Parser do
 
   @spec filter_number_of_letters([binary], integer) :: [binary]
   def filter_number_of_letters(words, n), do: words |> Enum.filter(&(String.length(&1) == n))
+
+  @spec write_to_file([binary], binary) :: :ok
+  def write_to_file(words, file_name) do
+    path = "dicts/#{file_name}.txt"
+
+    words
+    |> Enum.join("\n")
+    |> String.trim()
+    |> (&File.write!(path, &1)).()
+  end
 end

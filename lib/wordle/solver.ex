@@ -27,6 +27,18 @@ defmodule Wordle.Solver do
     end)
   end
 
+  @spec first_guesses([binary], [binary]) :: [binary]
+  def first_guesses(wordlist, guesses \\ [])
+  def first_guesses([], guesses), do: guesses
+
+  def first_guesses(wordlist = [hd | _tl], guesses) do
+    hd
+    |> String.codepoints()
+    |> Enum.map_join(fn _ -> "0" end)
+    |> (&feedback(wordlist, &1)).()
+    |> first_guesses(guesses ++ [hd])
+  end
+
   @spec update_with_letter_feedback([binary], binary, integer, binary) :: [binary]
   defp update_with_letter_feedback(wordlist, letter, position, feedback) do
     case feedback do

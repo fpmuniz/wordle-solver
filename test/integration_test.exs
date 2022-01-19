@@ -8,26 +8,15 @@ defmodule IntegrationTest do
     test "solves all words in wordle dict" do
       stats = full_dict_stats("wordle", 8)
 
-      assert stats == %{1 => 1, 2 => 127, 3 => 903, 4 => 945, 5 => 263, 6 => 58, 7 => 14, 8 => 4}
-      assert average(stats) == 3.6876889848812096
+      assert stats == %{1 => 1, 2 => 128, 3 => 857, 4 => 839, 5 => 425, 6 => 54, 7 => 7, 8 => 4}
+      assert average(stats) == 3.76414686825054
     end
 
     test "solves all words in termo dict" do
-      stats = full_dict_stats("termo", 9)
+      stats = full_dict_stats("termo", 8)
 
-      assert stats == %{
-               1 => 1,
-               2 => 132,
-               3 => 701,
-               4 => 564,
-               5 => 171,
-               6 => 50,
-               7 => 12,
-               8 => 3,
-               9 => 1
-             }
-
-      assert average(stats) == 3.6061162079510702
+      assert stats == %{1 => 1, 2 => 132, 3 => 655, 4 => 612, 5 => 185, 6 => 42, 7 => 6, 8 => 2}
+      assert average(stats) == 3.61651376146789
     end
   end
 

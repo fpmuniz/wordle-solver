@@ -5,26 +5,47 @@ defmodule Wordle.Solver do
   Usage:
 
   iex> words = ~w(done gone stay play)
-  iex> Solver.feedback(words, "stay", "0022")
-  ["play"]
-  iex> Solver.feedback(words, "0222")  # assumes the first word, which is "done"
-  ["gone"]
+  iex> solver = Solver.new(words)
+  %Wordle.Solver{complements: ["done", "stay"], wordlist: ["done", "gone", "stay", "play"]}
+  iex> Solver.feedback(solver, "stay", "0022")
+  %Wordle.Solver{complements: ["done", "stay"], wordlist: ["play"]}
+  iex> Solver.feedback(solver, "0222")  # assumes the first word, which is "done"
+  %Wordle.Solver{complements: ["done", "stay"], wordlist: ["gone"]}
   """
 
-  @spec feedback([binary], binary) :: [binary]
-  def feedback([best_guess | _] = wordlist, feedback) do
-    feedback(wordlist, best_guess, feedback)
+  alias Wordle.Game
+  alias Wordle.Solver
+
+  @type t :: %Solver{
+          wordlist: [binary],
+          complements: [binary]
+        }
+
+  defstruct wordlist: [], complements: []
+
+  @spec new([binary]) :: t()
+  def new(wordlist) do
+    %Solver{wordlist: wordlist, complements: first_guesses(wordlist)}
   end
 
-  @spec feedback([binary], binary, binary) :: [binary]
-  def feedback(wordlist, guess, feedback) do
-    feedback
-    |> String.codepoints()
-    |> Enum.with_index()
-    |> Enum.reduce(wordlist, fn {letter_feedback, pos}, w ->
-      letter = String.at(guess, pos)
-      update_with_letter_feedback(w, letter, pos, letter_feedback)
-    end)
+  @spec feedback(t(), binary) :: t()
+  def feedback(solver = %Solver{wordlist: [best_guess | _]}, feedback) do
+    feedback(solver, best_guess, feedback)
+  end
+
+  @spec feedback(t(), binary, binary) :: t()
+  def feedback(solver, guess, feedback) do
+    updated_wordlist =
+      feedback
+      |> String.codepoints()
+      |> Enum.with_index()
+      |> Enum.reduce(solver.wordlist, fn {letter_feedback, pos}, w ->
+        letter = String.at(guess, pos)
+        update_with_letter_feedback(w, letter, pos, letter_feedback)
+      end)
+      |> WordStats.order_by_scores()
+
+    %{solver | wordlist: updated_wordlist}
   end
 
   @spec first_guesses([binary], [binary]) :: [binary]
@@ -34,9 +55,36 @@ defmodule Wordle.Solver do
   def first_guesses(wordlist = [hd | _tl], guesses) do
     hd
     |> String.codepoints()
-    |> Enum.map_join(fn _ -> "0" end)
-    |> (&feedback(wordlist, &1)).()
+    |> Enum.reduce(wordlist, fn letter, wordlist -> wrong_letter(wordlist, letter) end)
     |> first_guesses(guesses ++ [hd])
+  end
+
+  @spec solve(t(), Game.t()) :: {:error | :ok, [binary]}
+  def solve(%Solver{wordlist: []}, %Game{guesses: guesses}), do: {:error, guesses}
+
+  def solve(%Solver{wordlist: [best_guess | _]}, %Game{right_word: best_guess, guesses: guesses}),
+    do: {:ok, [best_guess | guesses]}
+
+  def solve(
+        %Solver{complements: [best_guess | _]},
+        %Game{right_word: best_guess, guesses: guesses}
+      ),
+      do: {:ok, [best_guess | guesses]}
+
+  def solve(%Solver{complements: [guess | complements]} = solver, %Game{} = game) do
+    {game, feedback} = Game.guess(game, guess)
+
+    %{solver | complements: complements}
+    |> feedback(guess, feedback)
+    |> solve(game)
+  end
+
+  def solve(%Solver{wordlist: [guess | _], complements: []} = solver, %Game{} = game) do
+    {game, feedback} = Game.guess(game, guess)
+
+    solver
+    |> feedback(guess, feedback)
+    |> solve(game)
   end
 
   @spec update_with_letter_feedback([binary], binary, integer, binary) :: [binary]

@@ -1,4 +1,4 @@
-defmodule Parser do
+defmodule Wordle.Parser do
   @moduledoc ~S"""
   Allows you to do low-level operations regarding the reading and parsing of a dictionary file.
 

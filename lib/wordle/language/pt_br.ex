@@ -1,4 +1,4 @@
-defmodule Language.PtBr do
+defmodule Wordle.Language.PtBr do
   @moduledoc false
 
   @a_accents ~w(ã â á à)

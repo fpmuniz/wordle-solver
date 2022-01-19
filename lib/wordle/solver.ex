@@ -13,8 +13,7 @@ defmodule Wordle.Solver do
   %Wordle.Solver{complements: ["done", "stay"], wordlist: ["gone"]}
   """
 
-  alias Wordle.Game
-  alias Wordle.Solver
+  alias Wordle.{Game, Solver, WordStats}
 
   @type t :: %Solver{
           wordlist: [binary],
@@ -29,7 +28,7 @@ defmodule Wordle.Solver do
   end
 
   @spec feedback(t(), binary) :: t()
-  def feedback(solver = %Solver{wordlist: [best_guess | _]}, feedback) do
+  def feedback(%Solver{wordlist: [best_guess | _]} = solver, feedback) do
     feedback(solver, best_guess, feedback)
   end
 
@@ -52,7 +51,7 @@ defmodule Wordle.Solver do
   def first_guesses(wordlist, guesses \\ [])
   def first_guesses([], guesses), do: guesses
 
-  def first_guesses(wordlist = [hd | _tl], guesses) do
+  def first_guesses([hd | _tl] = wordlist, guesses) do
     hd
     |> String.codepoints()
     |> Enum.reduce(wordlist, fn letter, wordlist -> wrong_letter(wordlist, letter) end)

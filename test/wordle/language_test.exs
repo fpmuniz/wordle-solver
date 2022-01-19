@@ -1,5 +1,7 @@
 defmodule LanguageTest do
   use ExUnit.Case, async: true
+  alias Wordle.Language
+
   doctest Language
 
   describe "normalize/2 with :pt_br language" do

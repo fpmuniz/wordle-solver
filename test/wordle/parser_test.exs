@@ -1,5 +1,6 @@
 defmodule ParserTest do
   use ExUnit.Case, async: true
+  alias Wordle.Parser
   doctest Parser
 
   describe "filter_number_of_letters/1" do

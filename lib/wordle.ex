@@ -16,24 +16,23 @@ defmodule Wordle do
 
   @spec solve([binary], binary) :: {:ok | :error, [binary]}
   def solve(wordlist, right_word) do
-    solve(wordlist, right_word, [], wordlist)
+    solve(wordlist, right_word, [])
   end
 
-  @spec solve([binary], binary, [binary], [binary]) :: {:ok | :error, [binary]}
-  def solve(wordlist, right_word, guesses, complement)
+  @spec solve([binary], binary, [binary]) :: {:ok | :error, [binary]}
+  def solve(wordlist, right_word, guesses)
 
-  def solve([], _right_word, guesses, _complement), do: {:error, guesses}
-  def solve([best_guess | _], best_guess, guesses, _complement), do: {:ok, [best_guess | guesses]}
+  def solve([], _right_word, guesses), do: {:error, guesses}
+  def solve([best_guess | _], best_guess, guesses), do: {:ok, [best_guess | guesses]}
 
-  def solve(wordlist, right_word, guesses, complement) do
-    guess = best_guess(wordlist, complement)
+  def solve(wordlist, right_word, guesses) do
+    guess = best_guess(wordlist, [])
     {guesses, feedback} = Game.guess(right_word, guess, guesses)
-    complement = complement |> Solver.complement(guess) |> WordStats.order_by_scores()
 
     wordlist
     |> Solver.feedback(guess, feedback)
     |> WordStats.order_by_scores()
-    |> solve(right_word, guesses, complement)
+    |> solve(right_word, guesses)
   end
 
   @spec feedback([binary], binary, binary) :: [binary]

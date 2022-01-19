@@ -1,19 +1,18 @@
 defmodule IntegrationTest do
   use ExUnit.Case, async: true
 
-  @max_guesses 9
   @moduletag :integration
   @moduletag timeout: :infinity
 
   describe "Wordle.solve/2" do
     test "solves all words in wordle dict" do
-      stats = full_dict_stats("wordle")
+      stats = full_dict_stats("wordle", 8)
       assert stats == %{1 => 1, 2 => 127, 3 => 903, 4 => 945, 5 => 263, 6 => 58, 7 => 14, 8 => 4}
       assert average(stats) == 3.6876889848812096
     end
 
     test "solves all words in termo dict" do
-      stats = full_dict_stats("termo")
+      stats = full_dict_stats("termo", 9)
 
       assert stats == %{
                1 => 1,
@@ -31,8 +30,8 @@ defmodule IntegrationTest do
     end
   end
 
-  @spec full_dict_stats(binary) :: %{integer => integer}
-  defp full_dict_stats(dict_name) do
+  @spec full_dict_stats(binary, integer) :: %{integer => integer}
+  defp full_dict_stats(dict_name, max_guesses) do
     words = Parser.import_dictionary(dict_name)
 
     words
@@ -41,8 +40,8 @@ defmodule IntegrationTest do
         assert {:ok, guesses} = Wordle.solve(words, right_word),
                "Could not solve for #{right_word}."
 
-        assert length(guesses) <= @max_guesses,
-               "Could not solve for #{right_word} in #{@max_guesses} or less attempts."
+        assert length(guesses) <= max_guesses,
+               "Could not solve for #{right_word} in #{max_guesses} or less attempts."
 
         {right_word, length(guesses)}
       end)

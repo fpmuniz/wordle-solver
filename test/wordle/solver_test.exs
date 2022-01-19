@@ -16,11 +16,4 @@ defmodule Wordle.SolverTest do
       assert ["scare"] = Solver.feedback(words, "20200")
     end
   end
-
-  describe "complement/2" do
-    test "returns a list of words which does not contain letters from last guess" do
-      words = ~w(small ghost doing great scare)
-      assert ["small", "scare"] = Solver.complement(words, "doing")
-    end
-  end
 end

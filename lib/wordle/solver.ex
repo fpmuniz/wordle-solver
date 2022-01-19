@@ -27,16 +27,6 @@ defmodule Wordle.Solver do
     end)
   end
 
-  @spec complement([binary], binary) :: [binary]
-  def complement(wordlist, guess) do
-    guess
-    |> String.codepoints()
-    |> Enum.uniq()
-    |> Enum.reduce(wordlist, fn letter, wordlist ->
-      Enum.reject(wordlist, &String.contains?(&1, letter))
-    end)
-  end
-
   @spec update_with_letter_feedback([binary], binary, integer, binary) :: [binary]
   defp update_with_letter_feedback(wordlist, letter, position, feedback) do
     case feedback do

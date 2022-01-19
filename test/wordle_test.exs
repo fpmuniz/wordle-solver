@@ -16,16 +16,6 @@ defmodule WordleTest do
     end
   end
 
-  describe "best_guess/2" do
-    test "suggests first word when there are no guesses", %{words: words} do
-      assert Wordle.best_guess(words, []) == Enum.at(words, 0)
-    end
-
-    test "suggests first complement word when possible", %{words: words} do
-      assert Wordle.best_guess(words, ["test"]) == "test"
-    end
-  end
-
   defp words(context) do
     words = ~w(easy here fret test heal deal feel yoga stay dont)
 

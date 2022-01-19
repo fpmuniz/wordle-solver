@@ -25,23 +25,26 @@ defmodule Wordle do
   def solve([], _right_word, guesses), do: {:error, guesses}
   def solve([best_guess | _], best_guess, guesses), do: {:ok, [best_guess | guesses]}
 
-  def solve(wordlist, right_word, guesses) do
-    guess = best_guess(wordlist, [])
+  def solve(wordlist = [guess | _], right_word, guesses) do
     {guesses, feedback} = Game.guess(right_word, guess, guesses)
 
     wordlist
-    |> Solver.feedback(guess, feedback)
+    |> feedback(guess, feedback)
     |> WordStats.order_by_scores()
     |> solve(right_word, guesses)
   end
 
   @spec feedback([binary], binary, binary) :: [binary]
-  defdelegate feedback(wordlist, guess, feedback), to: Solver
+  def feedback(wordlist, guess, feedback) do
+    wordlist
+    |> Solver.feedback(guess, feedback)
+    |> WordStats.order_by_scores()
+  end
 
   @spec feedback([binary], binary) :: [binary]
-  defdelegate feedback(wordlist, feedback), to: Solver
-
-  @spec best_guess([binary], [binary]) :: binary
-  def best_guess(_wordlist, [top_score_complement | _]), do: top_score_complement
-  def best_guess([top_score_word | _], []), do: top_score_word
+  def feedback(wordlist, feedback) do
+    wordlist
+    |> Solver.feedback(feedback)
+    |> WordStats.order_by_scores()
+  end
 end

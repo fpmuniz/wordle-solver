@@ -14,7 +14,7 @@ defmodule Wordle.Language.PtBr do
   @upper_o_accents ~w(Ó Ô Õ)
   @upper_u_accents ~w(Ú)
 
-  @spec normalize(binary()) :: binary()
+  @spec normalize(String.t()) :: String.t()
   def normalize(word) do
     word
     |> String.codepoints()

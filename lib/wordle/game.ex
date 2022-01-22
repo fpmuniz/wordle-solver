@@ -20,14 +20,15 @@ defmodule Wordle.Game do
   alias Wordle.Game
 
   @type t :: %Game{
-          guesses: [binary()],
-          right_word: binary(),
-          wordlist: [binary()]
+          guesses: [String.t()],
+          right_word: String.t(),
+          wordlist: [String.t()]
         }
+  @type counts :: %{String.grapheme() => integer()}
 
   defstruct [:right_word, wordlist: [], guesses: []]
 
-  @spec new([binary()], binary()) :: t()
+  @spec new([String.t()], String.t()) :: t()
   def new(wordlist, right_word) do
     case right_word in wordlist do
       true -> %Game{wordlist: wordlist, right_word: right_word}
@@ -35,7 +36,7 @@ defmodule Wordle.Game do
     end
   end
 
-  @spec guess(t(), binary()) :: {t(), binary()}
+  @spec guess(t(), String.t()) :: {t(), String.t()}
   def guess(game, guess) do
     :ok = check_word_validity(game, guess)
     guesses = [guess | game.guesses]
@@ -53,6 +54,22 @@ defmodule Wordle.Game do
       end)
 
     {%{game | guesses: guesses}, feedback}
+  end
+
+  @spec exact_matches(map(), String.t(), String.t(), integer) :: map()
+  def exact_matches(feedback_so_far \\ %{}, guess, word, position \\ 0)
+  def exact_matches(feedback_so_far, "", "", _position), do: feedback_so_far
+
+  def exact_matches(feedback_so_far, guess, word, position) do
+    {guessed_letter, guess} = String.split_at(guess, 1)
+    {correct_letter, word} = String.split_at(word, 1)
+
+    guessed_letter
+    |> case do
+      ^correct_letter -> feedback_so_far |> Map.put(position, "2")
+      _ -> feedback_so_far
+    end
+    |> exact_matches(guess, word, position + 1)
   end
 
   defp check_word_validity(game, guess) do

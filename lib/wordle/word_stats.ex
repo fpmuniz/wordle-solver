@@ -11,7 +11,7 @@ defmodule Wordle.WordStats do
   ["hello", "hi"]
   """
 
-  @spec letter_frequencies([binary()]) :: map
+  @spec letter_frequencies([String.t()]) :: map
   def letter_frequencies(words) do
     words
     |> Enum.map(&get_letter_count/1)
@@ -21,13 +21,13 @@ defmodule Wordle.WordStats do
     |> Map.new()
   end
 
-  @spec order_by_scores([binary()]) :: [binary()]
+  @spec order_by_scores([String.t()]) :: [String.t()]
   def order_by_scores(words) do
     scores = letter_frequencies(words)
     order_by_scores(words, scores)
   end
 
-  @spec order_by_scores([binary()], map()) :: [binary()]
+  @spec order_by_scores([String.t()], map()) :: [String.t()]
   def order_by_scores(words, letter_frequencies) do
     words
     |> Enum.map(fn word ->

@@ -11,11 +11,9 @@ defmodule Wordle do
   alias Wordle.Parser
   alias Wordle.Solver
 
-  @spec from_dict(binary) :: Solver.t()
+  @spec from_dict(binary) :: [binary]
   def from_dict(dict_name) do
-    "dicts/#{dict_name}.txt"
-    |> Parser.import_dictionary()
-    |> Solver.new()
+    Parser.import_dictionary("dicts/#{dict_name}.txt")
   end
 
   @spec to_dict([binary], binary) :: :ok
@@ -30,5 +28,12 @@ defmodule Wordle do
     solver = Solver.new(wordlist)
     game = Game.new(wordlist, right_word)
     Solver.solve(solver, game)
+  end
+
+  @spec solve_randomly([binary], binary) :: {:ok | :error, [binary]}
+  def solve_randomly(wordlist, right_word) when is_list(wordlist) and is_binary(right_word) do
+    solver = Solver.new(wordlist)
+    game = Game.new(wordlist, right_word)
+    Solver.solve_randomly(solver, game)
   end
 end

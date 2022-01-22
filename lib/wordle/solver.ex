@@ -44,7 +44,6 @@ defmodule Wordle.Solver do
         letter = String.at(guess, pos)
         update_with_letter_feedback(w, letter, pos, letter_feedback)
       end)
-      |> WordStats.order_by_scores()
 
     %{solver | wordlist: updated_wordlist}
   end
@@ -77,6 +76,7 @@ defmodule Wordle.Solver do
 
     %{solver | complements: complements}
     |> feedback(guess, feedback)
+    |> order_by_scores()
     |> solve(game)
   end
 
@@ -85,7 +85,24 @@ defmodule Wordle.Solver do
 
     solver
     |> feedback(guess, feedback)
+    |> order_by_scores()
     |> solve(game)
+  end
+
+  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, [binary]}
+  def solve_randomly(%{wordlist: []}, %{guesses: guesses}), do: {:error, guesses}
+
+  def solve_randomly(%{wordlist: [right_word | _]}, %{guesses: guesses, right_word: right_word}),
+    do: {:ok, [right_word | guesses]}
+
+  def solve_randomly(solver, game) do
+    wordlist = Enum.shuffle(solver.wordlist)
+    [guess | _] = wordlist
+    {game, feedback} = Game.guess(game, guess)
+
+    solver
+    |> feedback(guess, feedback)
+    |> solve_randomly(game)
   end
 
   @spec update_with_letter_feedback([binary], binary, integer, binary) :: [binary]
@@ -112,5 +129,9 @@ defmodule Wordle.Solver do
   @spec right_position([binary], binary, integer) :: [binary]
   defp right_position(wordlist, letter, position) do
     Enum.filter(wordlist, &(String.at(&1, position) == letter))
+  end
+
+  defp order_by_scores(solver) do
+    %{solver | wordlist: WordStats.order_by_scores(solver.wordlist)}
   end
 end

@@ -2,31 +2,46 @@ defmodule IntegrationTest do
   use ExUnit.Case, async: true
 
   @moduletag :integration
-  @moduletag timeout: :infinity
+  @wordle_dict_average 3.76414686825054
+  @termo_dict_average 3.61651376146789
 
   describe "Wordle.solve/2" do
-    test "solves all words in wordle dict" do
+    test "solves all words in wordle dict with 8 or less attempts" do
       stats = full_dict_stats("wordle", 8)
 
       assert stats == %{1 => 1, 2 => 128, 3 => 857, 4 => 839, 5 => 425, 6 => 54, 7 => 7, 8 => 4}
-      assert average(stats) == 3.76414686825054
+      assert average(stats) == @wordle_dict_average
     end
 
-    test "solves all words in termo dict" do
+    test "solves all words in termo dict with 8 or less attempts" do
       stats = full_dict_stats("termo", 8)
 
       assert stats == %{1 => 1, 2 => 132, 3 => 655, 4 => 612, 5 => 185, 6 => 42, 7 => 6, 8 => 2}
-      assert average(stats) == 3.61651376146789
+      assert average(stats) == @termo_dict_average
+    end
+  end
+
+  describe "Wordle.solve_randomly/2" do
+    test "solves all words in wordle dict with 10 or less attempts and is slower than Wordle.solve/2" do
+      stats = full_dict_stats("wordle", 10, &Wordle.solve_randomly/2)
+
+      assert average(stats) > @wordle_dict_average
+    end
+
+    test "solves all words in termo dict with 10 or less attempts and is slower than Wordle.solve/2" do
+      stats = full_dict_stats("termo", 10, &Wordle.solve_randomly/2)
+
+      assert average(stats) > @termo_dict_average
     end
   end
 
   @spec full_dict_stats(binary, integer) :: %{integer => integer}
-  defp full_dict_stats(dict_name, max_guesses) do
-    words = Wordle.from_dict(dict_name).wordlist
+  defp full_dict_stats(dict_name, max_guesses, solver_fn \\ &Wordle.solve/2) do
+    words = Wordle.from_dict(dict_name)
 
     words
     |> Task.async_stream(fn right_word ->
-      assert {:ok, guesses} = Wordle.solve(words, right_word),
+      assert {:ok, guesses} = solver_fn.(words, right_word),
              "Could not solve for #{right_word}."
 
       assert length(guesses) <= max_guesses,

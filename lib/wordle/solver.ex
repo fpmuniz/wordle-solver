@@ -18,23 +18,23 @@ defmodule Wordle.Solver do
   alias Wordle.WordStats
 
   @type t :: %Solver{
-          wordlist: [binary],
-          complements: [binary]
+          wordlist: [binary()],
+          complements: [binary()]
         }
 
   defstruct wordlist: [], complements: []
 
-  @spec new([binary]) :: t()
+  @spec new([binary()]) :: t()
   def new(wordlist) do
     %Solver{wordlist: wordlist, complements: first_guesses(wordlist)}
   end
 
-  @spec feedback(t(), binary) :: t()
+  @spec feedback(t(), binary()) :: t()
   def feedback(%Solver{wordlist: [best_guess | _]} = solver, feedback) do
     feedback(solver, best_guess, feedback)
   end
 
-  @spec feedback(t(), binary, binary) :: t()
+  @spec feedback(t(), binary(), binary()) :: t()
   def feedback(solver, guess, feedback) do
     updated_wordlist =
       feedback
@@ -48,7 +48,7 @@ defmodule Wordle.Solver do
     %{solver | wordlist: updated_wordlist}
   end
 
-  @spec first_guesses([binary], [binary]) :: [binary]
+  @spec first_guesses([binary()], [binary()]) :: [binary()]
   def first_guesses(wordlist, guesses \\ [])
   def first_guesses([], guesses), do: guesses
 
@@ -59,7 +59,7 @@ defmodule Wordle.Solver do
     |> first_guesses(guesses ++ [hd])
   end
 
-  @spec solve(t(), Game.t()) :: {:error | :ok, [binary]}
+  @spec solve(t(), Game.t()) :: {:error | :ok, [binary()]}
   def solve(%Solver{wordlist: []}, %Game{guesses: guesses}), do: {:error, guesses}
 
   def solve(%Solver{wordlist: [best_guess | _]}, %Game{right_word: best_guess, guesses: guesses}),
@@ -89,7 +89,7 @@ defmodule Wordle.Solver do
     |> solve(game)
   end
 
-  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, [binary]}
+  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, [binary()]}
   def solve_randomly(%{wordlist: []}, %{guesses: guesses}), do: {:error, guesses}
 
   def solve_randomly(%{wordlist: [right_word | _]}, %{guesses: guesses, right_word: right_word}),
@@ -105,7 +105,7 @@ defmodule Wordle.Solver do
     |> solve_randomly(game)
   end
 
-  @spec update_with_letter_feedback([binary], binary, integer, binary) :: [binary]
+  @spec update_with_letter_feedback([binary()], binary(), integer(), binary()) :: [binary()]
   defp update_with_letter_feedback(wordlist, letter, position, feedback) do
     case feedback do
       "0" -> wrong_letter(wordlist, letter)
@@ -114,19 +114,19 @@ defmodule Wordle.Solver do
     end
   end
 
-  @spec wrong_letter([binary], binary) :: [binary]
+  @spec wrong_letter([binary()], binary()) :: [binary()]
   defp wrong_letter(wordlist, letter) do
     Enum.reject(wordlist, &String.contains?(&1, letter))
   end
 
-  @spec wrong_position([binary], binary, integer) :: [binary]
+  @spec wrong_position([binary()], binary(), integer()) :: [binary()]
   defp wrong_position(wordlist, letter, position) do
     wordlist
     |> Enum.filter(&String.contains?(&1, letter))
     |> Enum.reject(&(String.at(&1, position) == letter))
   end
 
-  @spec right_position([binary], binary, integer) :: [binary]
+  @spec right_position([binary()], binary(), integer()) :: [binary()]
   defp right_position(wordlist, letter, position) do
     Enum.filter(wordlist, &(String.at(&1, position) == letter))
   end

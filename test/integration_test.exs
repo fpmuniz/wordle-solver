@@ -35,7 +35,7 @@ defmodule IntegrationTest do
     end
   end
 
-  @spec full_dict_stats(binary, integer) :: %{integer => integer}
+  @spec full_dict_stats(binary(), integer()) :: %{integer() => integer()}
   defp full_dict_stats(dict_name, max_guesses, solver_fn \\ &Wordle.solve/2) do
     words = Wordle.from_dict(dict_name)
 
@@ -55,7 +55,7 @@ defmodule IntegrationTest do
     |> Map.new()
   end
 
-  @spec average(%{integer => integer}) :: float
+  @spec average(%{integer() => integer()}) :: float()
   defp average(stats) do
     total = stats |> Map.values() |> Enum.sum()
 

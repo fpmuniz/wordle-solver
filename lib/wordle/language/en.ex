@@ -1,7 +1,7 @@
 defmodule Wordle.Language.En do
   @moduledoc false
 
-  @spec normalize(binary) :: binary
+  @spec normalize(binary()) :: binary()
   def normalize(word) do
     word
     |> String.replace("'", "")

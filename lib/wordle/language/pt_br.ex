@@ -14,14 +14,14 @@ defmodule Wordle.Language.PtBr do
   @upper_o_accents ~w(Ó Ô Õ)
   @upper_u_accents ~w(Ú)
 
-  @spec normalize(binary) :: binary
+  @spec normalize(binary()) :: binary()
   def normalize(word) do
     word
     |> String.codepoints()
     |> Enum.map_join(&replace_accent/1)
   end
 
-  @spec replace_accent(<<_::32>>) :: <<_::32>>
+  @spec replace_accent(String.codepoint()) :: String.codepoint()
   defp replace_accent(l) when l in @a_accents, do: "a"
   defp replace_accent(l) when l in @c_accents, do: "c"
   defp replace_accent(l) when l in @e_accents, do: "e"

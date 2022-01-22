@@ -20,14 +20,14 @@ defmodule Wordle.Game do
   alias Wordle.Game
 
   @type t :: %Game{
-          guesses: [binary],
-          right_word: binary,
-          wordlist: [binary]
+          guesses: [binary()],
+          right_word: binary(),
+          wordlist: [binary()]
         }
 
   defstruct [:right_word, wordlist: [], guesses: []]
 
-  @spec new([binary], binary) :: t()
+  @spec new([binary()], binary()) :: t()
   def new(wordlist, right_word) do
     case right_word in wordlist do
       true -> %Game{wordlist: wordlist, right_word: right_word}
@@ -35,7 +35,7 @@ defmodule Wordle.Game do
     end
   end
 
-  @spec guess(t(), binary) :: {t(), binary}
+  @spec guess(t(), binary()) :: {t(), binary()}
   def guess(game, guess) do
     :ok = check_word_validity(game, guess)
     guesses = [guess | game.guesses]

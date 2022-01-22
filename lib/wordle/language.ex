@@ -12,7 +12,7 @@ defmodule Wordle.Language do
   """
   alias Wordle.Language.{En, PtBr}
 
-  @spec normalize([binary], atom) :: [binary]
+  @spec normalize([binary()], atom()) :: [binary()]
   def normalize(words, :pt_br), do: words |> Enum.map(&PtBr.normalize/1)
   def normalize(words, :en), do: words |> Enum.map(&En.normalize/1)
 end

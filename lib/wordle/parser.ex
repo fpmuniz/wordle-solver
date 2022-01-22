@@ -20,27 +20,27 @@ defmodule Wordle.Parser do
   ["here", "will"]
   """
 
-  @spec import_dictionary(binary) :: [binary]
+  @spec import_dictionary(binary()) :: [binary()]
   def import_dictionary(dict) do
     dict
     |> File.read!()
     |> String.split("\n")
   end
 
-  @spec downcase([binary]) :: [binary]
+  @spec downcase([binary()]) :: [binary()]
   def downcase(words), do: words |> Enum.map(&String.downcase/1)
 
-  @spec trim([binary]) :: [binary]
+  @spec trim([binary()]) :: [binary()]
   def trim(words), do: words |> Enum.map(&String.trim/1)
 
-  @spec filter_valid([binary], Regex.t()) :: [binary]
+  @spec filter_valid([binary()], Regex.t()) :: [binary()]
   def filter_valid(words, pattern \\ ~r/^[a-z]+$/),
     do: words |> Enum.filter(&String.match?(&1, pattern))
 
-  @spec filter_number_of_letters([binary], integer) :: [binary]
+  @spec filter_number_of_letters([binary()], integer()) :: [binary()]
   def filter_number_of_letters(words, n), do: words |> Enum.filter(&(String.length(&1) == n))
 
-  @spec write_to_file([binary], binary) :: :ok
+  @spec write_to_file([binary()], binary()) :: :ok
   def write_to_file(words, file_name) do
     words
     |> Enum.join("\n")

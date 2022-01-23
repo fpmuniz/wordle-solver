@@ -1,6 +1,7 @@
 defmodule Lexicon do
   @moduledoc ~S"""
-  Allows you to do low-level operations regarding the reading and parsing of a lexicon file.
+  Allows you to do low-level operations regarding the reading and parsing of a lexicon file. A
+  lexicon file is simply a file with a list of words separated by line breaks.
 
   You can import a lexicon whose words are separated by line breaks, or simply use a list of
   words you already have. What is usually done is you import the lexicon file, and then parse it
@@ -24,7 +25,7 @@ defmodule Lexicon do
 
   @spec import(String.t()) :: t()
   def import(name) do
-    "dicts/#{name}.txt"
+    "lexicons/#{name}.txt"
     |> File.read!()
     |> String.split("\n")
   end
@@ -47,6 +48,6 @@ defmodule Lexicon do
     dict
     |> Enum.join("\n")
     |> String.trim()
-    |> (&File.write!("dicts/#{name}.txt", &1)).()
+    |> (&File.write!("lexicons/#{name}.txt", &1)).()
   end
 end

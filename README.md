@@ -20,10 +20,10 @@ iex -S mix
 ```
 
 In order to start using, let's say you want to play a game in PT-BR. If you donwloaded your
-lexicon into `dicts/pt_br.txt`, you can start a simple Wordle game by running:
+lexicon into `lexicons/pt_br.txt`, you can start a simple Wordle game by running:
 
 ```elixir
-iex> words = "dicts/pt_br.txt"
+iex> words = "lexicons/pt_br.txt"
 iex> |> Lexicon.import()        # reads a dict file and converts it into a list of strings
 iex> |> Lexicon.trim()                     # trims all trailing whitespace
 iex> |> Language.normalize(:pt_br)        # removes accents and diacritics

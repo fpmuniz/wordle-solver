@@ -19,7 +19,7 @@ defmodule Wordle.GameTest do
     test "returns a string of 0, 1 and 2 as feedback for a guessed word" do
       word = "word"
       game = Game.new(~w(some word gone), word)
-      assert {game, "0200"} = Game.guess(game, "some")
+      assert %Game{feedbacks: ["0200" | _]} = game = Game.guess(game, "some")
       assert ["some"] = game.guesses
     end
 

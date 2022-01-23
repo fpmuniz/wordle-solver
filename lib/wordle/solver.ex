@@ -74,7 +74,8 @@ defmodule Wordle.Solver do
       do: {:ok, [best_guess | guesses]}
 
   def solve(%Solver{complements: [guess | complements]} = solver, %Game{} = game) do
-    {game, feedback} = Game.guess(game, guess)
+    game = Game.guess(game, guess)
+    [feedback | _] = game.feedbacks
 
     %{solver | complements: complements}
     |> feedback(guess, feedback)
@@ -83,7 +84,8 @@ defmodule Wordle.Solver do
   end
 
   def solve(%Solver{wordlist: [guess | _], complements: []} = solver, %Game{} = game) do
-    {game, feedback} = Game.guess(game, guess)
+    game = Game.guess(game, guess)
+    [feedback | _] = game.feedbacks
 
     solver
     |> feedback(guess, feedback)
@@ -100,7 +102,8 @@ defmodule Wordle.Solver do
   def solve_randomly(solver, game) do
     wordlist = Enum.shuffle(solver.wordlist)
     [guess | _] = wordlist
-    {game, feedback} = Game.guess(game, guess)
+    game = Game.guess(game, guess)
+    [feedback | _] = game.feedbacks
 
     solver
     |> feedback(guess, feedback)

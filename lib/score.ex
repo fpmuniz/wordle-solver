@@ -11,10 +11,12 @@ defmodule Score do
   ["hello", "hi"]
   """
 
+  @type counts :: %{String.grapheme() => integer()}
+
   @spec letter_frequencies([String.t()]) :: map
   def letter_frequencies(words) do
     words
-    |> Enum.map(&get_letter_count/1)
+    |> Enum.map(&grapheme_count/1)
     |> Enum.reduce(%{}, fn counts, acc ->
       Map.merge(acc, counts, fn _key, count1, count2 -> count1 + count2 end)
     end)
@@ -38,6 +40,13 @@ defmodule Score do
     |> Enum.map(&elem(&1, 0))
   end
 
+  @spec grapheme_count(String.t()) :: %{String.grapheme() => integer()}
+  def grapheme_count(word) do
+    word
+    |> String.graphemes()
+    |> Enum.frequencies()
+  end
+
   defp word_score(word, letter_frequencies) do
     word
     |> String.graphemes()
@@ -45,11 +54,5 @@ defmodule Score do
     |> Enum.reduce(0, fn letter, acc_score ->
       acc_score + Map.get(letter_frequencies, letter)
     end)
-  end
-
-  defp get_letter_count(word) do
-    word
-    |> String.graphemes()
-    |> Enum.frequencies()
   end
 end

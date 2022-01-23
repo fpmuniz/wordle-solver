@@ -1,5 +1,6 @@
 defmodule Language.PtBr do
   @moduledoc false
+  @behaviour Language
 
   @a_accents ~w(ã â á à)
   @c_accents ~w(ç)
@@ -14,6 +15,7 @@ defmodule Language.PtBr do
   @upper_o_accents ~w(Ó Ô Õ)
   @upper_u_accents ~w(Ú)
 
+  @impl true
   @spec normalize(String.t()) :: String.t()
   def normalize(word) do
     word

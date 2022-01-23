@@ -10,9 +10,13 @@ defmodule Language do
   iex> Language.normalize(["don't", "weren't"], :en)
   ["dont", "werent"]
   """
-  alias Language.{En, PtBr}
+
+  alias Language.En
+  alias Language.PtBr
+
+  @callback normalize(word :: String.t()) :: String.t()
 
   @spec normalize(Dictionary.t(), atom()) :: Dictionary.t()
-  def normalize(words, :pt_br), do: words |> Enum.map(&PtBr.normalize/1)
-  def normalize(words, :en), do: words |> Enum.map(&En.normalize/1)
+  def normalize(dict, :pt_br), do: dict |> Enum.map(&PtBr.normalize/1)
+  def normalize(dict, :en), do: dict |> Enum.map(&En.normalize/1)
 end

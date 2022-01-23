@@ -26,7 +26,7 @@ defmodule Wordle.Game do
           right_word: String.t(),
           wordlist: Dictionary.t()
         }
-  @type counts :: %{String.grapheme() => integer()}
+  @type counts :: %{Grapheme.t() => integer()}
 
   defstruct [:right_word, :wordlist, guesses: [], feedbacks: []]
 

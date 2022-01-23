@@ -16,7 +16,7 @@ defmodule Wordle.Solver do
   alias Wordle.Feedback
   alias Wordle.Game
   alias Wordle.Solver
-  alias Score
+  alias Grapheme
 
   @type t :: %Solver{
           wordlist: Dictionary.t(),
@@ -110,7 +110,7 @@ defmodule Wordle.Solver do
     |> solve_randomly(game)
   end
 
-  @spec update_with_grapheme_feedback(Dictionary.t(), String.grapheme(), integer(), String.t()) ::
+  @spec update_with_grapheme_feedback(Dictionary.t(), Grapheme.t(), integer(), String.t()) ::
           [
             String.t()
           ]
@@ -122,32 +122,32 @@ defmodule Wordle.Solver do
     end
   end
 
-  @spec reject_grapheme(Dictionary.t(), String.grapheme()) :: Dictionary.t()
+  @spec reject_grapheme(Dictionary.t(), Grapheme.t()) :: Dictionary.t()
   defp reject_grapheme(wordlist, grapheme) do
     Enum.reject(wordlist, &String.contains?(&1, grapheme))
   end
 
-  @spec wrong_position(Dictionary.t(), String.grapheme(), integer()) :: Dictionary.t()
+  @spec wrong_position(Dictionary.t(), Grapheme.t(), integer()) :: Dictionary.t()
   defp wrong_position(wordlist, grapheme, position) do
     wordlist
     |> Enum.filter(&String.contains?(&1, grapheme))
     |> Enum.reject(&(String.at(&1, position) == grapheme))
   end
 
-  @spec right_position(Dictionary.t(), String.grapheme(), integer()) :: Dictionary.t()
+  @spec right_position(Dictionary.t(), Grapheme.t(), integer()) :: Dictionary.t()
   defp right_position(wordlist, grapheme, position) do
     Enum.filter(wordlist, &(String.at(&1, position) == grapheme))
   end
 
   @spec order_by_scores(t()) :: t()
   defp order_by_scores(solver) do
-    %{solver | wordlist: Score.order_by_scores(solver.wordlist)}
+    %{solver | wordlist: Grapheme.order_by_scores(solver.wordlist)}
   end
 
   @spec filter_wordlist_by_maxmin(Dictionary.t(), Feedback.maxmin()) :: Dictionary.t()
   defp filter_wordlist_by_maxmin(wordlist, maxmin) do
     Enum.filter(wordlist, fn word ->
-      counts = Score.grapheme_count(word)
+      counts = Grapheme.grapheme_count(word)
 
       maxmin
       |> Map.keys()

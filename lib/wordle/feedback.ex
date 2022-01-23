@@ -2,12 +2,12 @@ defmodule Wordle.Feedback do
   alias Wordle.Feedback
   defstruct [:acc, :counts, :right_word, :guessed_word, :size, position: 0]
 
-  @type maxmin :: %{String.grapheme() => [max: integer(), min: integer()]}
+  @type maxmin :: %{Grapheme.t() => [max: integer(), min: integer()]}
   @type t :: %Feedback{
-          counts: Score.counts(),
+          counts: Grapheme.counts(),
           right_word: String.t(),
           guessed_word: String.t(),
-          acc: [String.grapheme()],
+          acc: [Grapheme.t()],
           position: integer(),
           size: integer()
         }
@@ -24,7 +24,7 @@ defmodule Wordle.Feedback do
   @spec maxmin(String.t(), String.t()) :: maxmin()
   def maxmin(guessed_word, response) do
     n = String.length(guessed_word)
-    guess_counts = Score.grapheme_count(guessed_word)
+    guess_counts = Grapheme.grapheme_count(guessed_word)
     feedback_counts = feedback_grapheme_counts(guessed_word, response)
 
     Map.merge(guess_counts, feedback_counts, fn _grapheme, guess_count, feedback_count ->
@@ -40,7 +40,7 @@ defmodule Wordle.Feedback do
     end)
   end
 
-  @spec feedback_grapheme_counts(String.t(), String.t()) :: Score.counts()
+  @spec feedback_grapheme_counts(String.t(), String.t()) :: Grapheme.counts()
   defp feedback_grapheme_counts(guessed_word, response) do
     response
     |> String.graphemes()
@@ -58,7 +58,7 @@ defmodule Wordle.Feedback do
 
   @spec new(String.t(), String.t()) :: Feedback.t()
   defp new(right_word, guessed_word) do
-    counts = Score.grapheme_count(right_word)
+    counts = Grapheme.grapheme_count(right_word)
     acc = right_word |> String.graphemes() |> Enum.map(fn _grapheme -> "0" end)
 
     %Feedback{
@@ -100,7 +100,7 @@ defmodule Wordle.Feedback do
     |> partial_matches()
   end
 
-  @spec decrease_count(t(), String.grapheme()) :: t()
+  @spec decrease_count(t(), Grapheme.t()) :: t()
   defp decrease_count(feedback, grapheme) do
     count = get_count(feedback, grapheme)
 
@@ -109,7 +109,7 @@ defmodule Wordle.Feedback do
     |> update_counts(feedback)
   end
 
-  @spec increase_count(t(), String.grapheme()) :: t()
+  @spec increase_count(t(), Grapheme.t()) :: t()
   defp increase_count(%Feedback{} = feedback, grapheme) do
     count = get_count(feedback, grapheme)
 
@@ -118,24 +118,24 @@ defmodule Wordle.Feedback do
     |> update_counts(feedback)
   end
 
-  @spec increase_count(Score.counts(), String.grapheme()) :: Score.counts()
+  @spec increase_count(Grapheme.counts(), Grapheme.t()) :: Grapheme.counts()
   defp increase_count(count_map, grapheme) when is_map(count_map) do
     count_map
     |> Map.get_and_update!(grapheme, fn count -> {count, count + 1} end)
     |> (&elem(&1, 1)).()
   end
 
-  @spec get_count(t(), String.grapheme()) :: integer()
+  @spec get_count(t(), Grapheme.t()) :: integer()
   defp get_count(feedback, grapheme) do
     Map.get(feedback.counts, grapheme, 0)
   end
 
-  @spec update_counts(Score.counts(), t()) :: t()
+  @spec update_counts(Grapheme.counts(), t()) :: t()
   defp update_counts(new_counts, feedback) do
     Map.put(feedback, :counts, new_counts)
   end
 
-  @spec put_answer(t(), String.grapheme()) :: t()
+  @spec put_answer(t(), Grapheme.t()) :: t()
   defp put_answer(feedback, one_or_two) when one_or_two in ~w(1 2) do
     position = feedback.position
     curr = Enum.at(feedback.acc, position)

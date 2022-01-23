@@ -21,7 +21,7 @@ defmodule Language.PtBr do
     |> Enum.map_join(&replace_accent/1)
   end
 
-  @spec replace_accent(String.grapheme()) :: String.grapheme()
+  @spec replace_accent(Grapheme.t()) :: Grapheme.t()
   defp replace_accent(l) when l in @a_accents, do: "a"
   defp replace_accent(l) when l in @c_accents, do: "c"
   defp replace_accent(l) when l in @e_accents, do: "e"

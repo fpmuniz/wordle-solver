@@ -1,17 +1,22 @@
-defmodule Score do
+defmodule Grapheme do
   @moduledoc ~S"""
   This module allows you to create statistics about frequency of letters in a given list of words
   (or even strings in general). It is mostly used by the Wordle module, but you can use it manually
   aswell.
 
   iex> words = ["hi", "hello"]
-  iex> frequencies = Score.letter_frequencies(words)
+  iex> frequencies = Grapheme.letter_frequencies(words)
   %{"e" => 1, "h" => 2, "i" => 1, "l" => 2, "o" => 1}
-  iex> Score.order_by_scores(words, frequencies)
+  iex> Grapheme.order_by_scores(words, frequencies)
   ["hello", "hi"]
   """
 
-  @type counts :: %{String.grapheme() => integer()}
+  @type t :: String.grapheme()
+
+  @typedoc """
+  A map containing a count of graphemes as values and the graphemes themselves as keys.
+  """
+  @type counts :: %{t() => integer()}
 
   @spec letter_frequencies(Dictionary.t()) :: map
   def letter_frequencies(words) do

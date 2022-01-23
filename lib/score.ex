@@ -13,7 +13,7 @@ defmodule Score do
 
   @type counts :: %{String.grapheme() => integer()}
 
-  @spec letter_frequencies([String.t()]) :: map
+  @spec letter_frequencies(Dictionary.t()) :: map
   def letter_frequencies(words) do
     words
     |> Enum.map(&grapheme_count/1)
@@ -23,13 +23,13 @@ defmodule Score do
     |> Map.new()
   end
 
-  @spec order_by_scores([String.t()]) :: [String.t()]
+  @spec order_by_scores(Dictionary.t()) :: Dictionary.t()
   def order_by_scores(words) do
     scores = letter_frequencies(words)
     order_by_scores(words, scores)
   end
 
-  @spec order_by_scores([String.t()], map()) :: [String.t()]
+  @spec order_by_scores(Dictionary.t(), map()) :: Dictionary.t()
   def order_by_scores(words, letter_frequencies) do
     words
     |> Enum.map(fn word ->
@@ -40,7 +40,7 @@ defmodule Score do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @spec grapheme_count(String.t()) :: %{String.grapheme() => integer()}
+  @spec grapheme_count(String.t()) :: counts()
   def grapheme_count(word) do
     word
     |> String.graphemes()

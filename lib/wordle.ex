@@ -11,26 +11,26 @@ defmodule Wordle do
   alias Dictionary
   alias Wordle.Solver
 
-  @spec from_dict(String.t()) :: [String.t()]
+  @spec from_dict(String.t()) :: Dictionary.t()
   def from_dict(dict_name) do
     Dictionary.import_dictionary("dicts/#{dict_name}.txt")
   end
 
-  @spec to_dict([String.t()], String.t()) :: :ok
+  @spec to_dict(Dictionary.t(), String.t()) :: :ok
   def to_dict(wordlist, dict_name) do
     path = "dicts/#{dict_name}.txt"
 
     Dictionary.write_to_file(wordlist, path)
   end
 
-  @spec solve([String.t()], String.t()) :: {:ok | :error, [String.t()]}
+  @spec solve(Dictionary.t(), String.t()) :: {:ok | :error, Dictionary.t()}
   def solve(wordlist, right_word) when is_list(wordlist) and is_binary(right_word) do
     solver = Solver.new(wordlist)
     game = Game.new(wordlist, right_word)
     Solver.solve(solver, game)
   end
 
-  @spec solve_randomly([String.t()], String.t()) :: {:ok | :error, [String.t()]}
+  @spec solve_randomly(Dictionary.t(), String.t()) :: {:ok | :error, Dictionary.t()}
   def solve_randomly(wordlist, right_word) when is_list(wordlist) and is_binary(right_word) do
     solver = Solver.new(wordlist)
     game = Game.new(wordlist, right_word)

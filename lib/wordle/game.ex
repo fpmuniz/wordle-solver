@@ -21,16 +21,16 @@ defmodule Wordle.Game do
   alias Wordle.Feedback
 
   @type t :: %Game{
-          guesses: [String.t()],
-          feedbacks: [String.t()],
+          guesses: Dictionary.t(),
+          feedbacks: Dictionary.t(),
           right_word: String.t(),
-          wordlist: [String.t()]
+          wordlist: Dictionary.t()
         }
   @type counts :: %{String.grapheme() => integer()}
 
   defstruct [:right_word, :wordlist, guesses: [], feedbacks: []]
 
-  @spec new([String.t()], String.t()) :: t()
+  @spec new(Dictionary.t(), String.t()) :: t()
   def new(wordlist, right_word) do
     case right_word in wordlist do
       true -> %Game{wordlist: wordlist, right_word: right_word}

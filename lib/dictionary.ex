@@ -20,27 +20,29 @@ defmodule Dictionary do
   ["here", "will"]
   """
 
-  @spec import_dictionary(String.t()) :: [String.t()]
+  @type t :: t()
+
+  @spec import_dictionary(String.t()) :: t()
   def import_dictionary(dict) do
     dict
     |> File.read!()
     |> String.split("\n")
   end
 
-  @spec downcase([String.t()]) :: [String.t()]
+  @spec downcase(t()) :: t()
   def downcase(words), do: words |> Enum.map(&String.downcase/1)
 
-  @spec trim([String.t()]) :: [String.t()]
+  @spec trim(t()) :: t()
   def trim(words), do: words |> Enum.map(&String.trim/1)
 
-  @spec filter_valid([String.t()], Regex.t()) :: [String.t()]
+  @spec filter_valid(t(), Regex.t()) :: t()
   def filter_valid(words, pattern \\ ~r/^[a-z]+$/),
     do: words |> Enum.filter(&String.match?(&1, pattern))
 
-  @spec filter_number_of_letters([String.t()], integer()) :: [String.t()]
+  @spec filter_number_of_letters(t(), integer()) :: t()
   def filter_number_of_letters(words, n), do: words |> Enum.filter(&(String.length(&1) == n))
 
-  @spec write_to_file([String.t()], String.t()) :: :ok
+  @spec write_to_file(t(), String.t()) :: :ok
   def write_to_file(words, file_name) do
     words
     |> Enum.join("\n")

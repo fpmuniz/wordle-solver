@@ -19,13 +19,13 @@ defmodule Wordle.Solver do
   alias Score
 
   @type t :: %Solver{
-          wordlist: [String.t()],
-          complements: [String.t()]
+          wordlist: Dictionary.t(),
+          complements: Dictionary.t()
         }
 
   defstruct wordlist: [], complements: []
 
-  @spec new([String.t()]) :: t()
+  @spec new(Dictionary.t()) :: t()
   def new(wordlist) do
     %Solver{wordlist: wordlist, complements: first_guesses(wordlist)}
   end
@@ -50,7 +50,7 @@ defmodule Wordle.Solver do
     %{solver | wordlist: updated_wordlist}
   end
 
-  @spec first_guesses([String.t()], [String.t()]) :: [String.t()]
+  @spec first_guesses(Dictionary.t(), Dictionary.t()) :: Dictionary.t()
   def first_guesses(wordlist, guesses \\ [])
   def first_guesses([], guesses), do: guesses
 
@@ -61,7 +61,7 @@ defmodule Wordle.Solver do
     |> first_guesses(guesses ++ [hd])
   end
 
-  @spec solve(t(), Game.t()) :: {:error | :ok, [String.t()]}
+  @spec solve(t(), Game.t()) :: {:error | :ok, Dictionary.t()}
   def solve(%Solver{wordlist: []}, %Game{guesses: guesses}), do: {:error, guesses}
 
   def solve(%Solver{wordlist: [best_guess | _]}, %Game{right_word: best_guess, guesses: guesses}),
@@ -93,7 +93,7 @@ defmodule Wordle.Solver do
     |> solve(game)
   end
 
-  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, [String.t()]}
+  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, Dictionary.t()}
   def solve_randomly(%{wordlist: []}, %{guesses: guesses}), do: {:error, guesses}
 
   def solve_randomly(%{wordlist: [right_word | _]}, %{guesses: guesses, right_word: right_word}),
@@ -110,9 +110,10 @@ defmodule Wordle.Solver do
     |> solve_randomly(game)
   end
 
-  @spec update_with_grapheme_feedback([String.t()], String.grapheme(), integer(), String.t()) :: [
-          String.t()
-        ]
+  @spec update_with_grapheme_feedback(Dictionary.t(), String.grapheme(), integer(), String.t()) ::
+          [
+            String.t()
+          ]
   defp update_with_grapheme_feedback(wordlist, grapheme, position, feedback) do
     case feedback do
       "0" -> wordlist
@@ -121,19 +122,19 @@ defmodule Wordle.Solver do
     end
   end
 
-  @spec reject_grapheme([String.t()], String.grapheme()) :: [String.t()]
+  @spec reject_grapheme(Dictionary.t(), String.grapheme()) :: Dictionary.t()
   defp reject_grapheme(wordlist, grapheme) do
     Enum.reject(wordlist, &String.contains?(&1, grapheme))
   end
 
-  @spec wrong_position([String.t()], String.grapheme(), integer()) :: [String.t()]
+  @spec wrong_position(Dictionary.t(), String.grapheme(), integer()) :: Dictionary.t()
   defp wrong_position(wordlist, grapheme, position) do
     wordlist
     |> Enum.filter(&String.contains?(&1, grapheme))
     |> Enum.reject(&(String.at(&1, position) == grapheme))
   end
 
-  @spec right_position([String.t()], String.grapheme(), integer()) :: [String.t()]
+  @spec right_position(Dictionary.t(), String.grapheme(), integer()) :: Dictionary.t()
   defp right_position(wordlist, grapheme, position) do
     Enum.filter(wordlist, &(String.at(&1, position) == grapheme))
   end
@@ -143,7 +144,7 @@ defmodule Wordle.Solver do
     %{solver | wordlist: Score.order_by_scores(solver.wordlist)}
   end
 
-  @spec filter_wordlist_by_maxmin([String.t()], Feedback.maxmin()) :: [String.t()]
+  @spec filter_wordlist_by_maxmin(Dictionary.t(), Feedback.maxmin()) :: Dictionary.t()
   defp filter_wordlist_by_maxmin(wordlist, maxmin) do
     Enum.filter(wordlist, fn word ->
       counts = Score.grapheme_count(word)

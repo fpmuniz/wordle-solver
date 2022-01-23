@@ -12,7 +12,7 @@ defmodule Language do
   """
   alias Language.{En, PtBr}
 
-  @spec normalize([String.t()], atom()) :: [String.t()]
+  @spec normalize(Dictionary.t(), atom()) :: Dictionary.t()
   def normalize(words, :pt_br), do: words |> Enum.map(&PtBr.normalize/1)
   def normalize(words, :en), do: words |> Enum.map(&En.normalize/1)
 end

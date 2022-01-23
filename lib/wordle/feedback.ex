@@ -24,7 +24,7 @@ defmodule Wordle.Feedback do
   @spec maxmin(String.t(), String.t()) :: maxmin()
   def maxmin(guessed_word, response) do
     n = String.length(guessed_word)
-    guess_counts = Grapheme.grapheme_count(guessed_word)
+    guess_counts = Grapheme.counts(guessed_word)
     feedback_counts = feedback_grapheme_counts(guessed_word, response)
 
     Map.merge(guess_counts, feedback_counts, fn _grapheme, guess_count, feedback_count ->
@@ -58,7 +58,7 @@ defmodule Wordle.Feedback do
 
   @spec new(String.t(), String.t()) :: Feedback.t()
   defp new(right_word, guessed_word) do
-    counts = Grapheme.grapheme_count(right_word)
+    counts = Grapheme.counts(right_word)
     acc = right_word |> String.graphemes() |> Enum.map(fn _grapheme -> "0" end)
 
     %Feedback{

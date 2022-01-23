@@ -147,7 +147,7 @@ defmodule Wordle.Solver do
   @spec filter_wordlist_by_maxmin(Dictionary.t(), Feedback.maxmin()) :: Dictionary.t()
   defp filter_wordlist_by_maxmin(wordlist, maxmin) do
     Enum.filter(wordlist, fn word ->
-      counts = Grapheme.grapheme_count(word)
+      counts = Grapheme.counts(word)
 
       maxmin
       |> Map.keys()

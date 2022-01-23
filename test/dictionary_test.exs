@@ -2,10 +2,10 @@ defmodule DictionaryTest do
   use ExUnit.Case, async: true
   doctest Dictionary
 
-  describe "filter_number_of_letters/1" do
+  describe "filter_by_number_of_graphenes/1" do
     test "only returns 5 letter words" do
       words = ~w(do you wanna see five letter words now)
-      assert Dictionary.filter_number_of_letters(words, 5) == ~w(wanna words)
+      assert Dictionary.filter_by_number_of_graphenes(words, 5) == ~w(wanna words)
     end
   end
 

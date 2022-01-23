@@ -19,9 +19,9 @@ defmodule Grapheme do
   @type counts :: %{t() => integer()}
 
   @spec letter_frequencies(Dictionary.t()) :: map
-  def letter_frequencies(words) do
-    words
-    |> Enum.map(&grapheme_count/1)
+  def letter_frequencies(dict) do
+    dict
+    |> Enum.map(&counts/1)
     |> Enum.reduce(%{}, fn counts, acc ->
       Map.merge(acc, counts, fn _key, count1, count2 -> count1 + count2 end)
     end)
@@ -29,14 +29,14 @@ defmodule Grapheme do
   end
 
   @spec order_by_scores(Dictionary.t()) :: Dictionary.t()
-  def order_by_scores(words) do
-    scores = letter_frequencies(words)
-    order_by_scores(words, scores)
+  def order_by_scores(dict) do
+    scores = letter_frequencies(dict)
+    order_by_scores(dict, scores)
   end
 
   @spec order_by_scores(Dictionary.t(), map()) :: Dictionary.t()
-  def order_by_scores(words, letter_frequencies) do
-    words
+  def order_by_scores(dict, letter_frequencies) do
+    dict
     |> Enum.map(fn word ->
       {word, word_score(word, letter_frequencies)}
     end)
@@ -45,8 +45,8 @@ defmodule Grapheme do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @spec grapheme_count(String.t()) :: counts()
-  def grapheme_count(word) do
+  @spec counts(String.t()) :: counts()
+  def counts(word) do
     word
     |> String.graphemes()
     |> Enum.frequencies()

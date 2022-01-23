@@ -3,7 +3,7 @@ defmodule IntegrationTest do
 
   @moduletag :integration
   @wordle_dict_average 3.76414686825054
-  @termo_dict_average 3.61651376146789
+  @termo_dict_average 3.615902140672783
 
   describe "Wordle.solve/2" do
     test "solves all words in wordle dict with 8 or less attempts" do
@@ -16,7 +16,7 @@ defmodule IntegrationTest do
     test "solves all words in termo dict with 8 or less attempts" do
       stats = full_dict_stats("termo", 8)
 
-      assert stats == %{1 => 1, 2 => 132, 3 => 655, 4 => 612, 5 => 185, 6 => 42, 7 => 6, 8 => 2}
+      assert stats == %{1 => 1, 2 => 132, 3 => 655, 4 => 612, 5 => 186, 6 => 41, 7 => 6, 8 => 2}
       assert average(stats) == @termo_dict_average
     end
   end

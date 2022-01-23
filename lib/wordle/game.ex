@@ -18,6 +18,7 @@ defmodule Wordle.Game do
   """
 
   alias Wordle.Game
+  alias Wordle.Feedback
 
   @type t :: %Game{
           guesses: [String.t()],
@@ -26,7 +27,7 @@ defmodule Wordle.Game do
         }
   @type counts :: %{String.grapheme() => integer()}
 
-  defstruct [:right_word, wordlist: [], guesses: []]
+  defstruct [:right_word, :wordlist, guesses: []]
 
   @spec new([String.t()], String.t()) :: t()
   def new(wordlist, right_word) do
@@ -39,39 +40,17 @@ defmodule Wordle.Game do
   @spec guess(t(), String.t()) :: {t(), String.t()}
   def guess(game, guess) do
     :ok = check_word_validity(game, guess)
-    guesses = [guess | game.guesses]
+    feedback = Feedback.build(game.right_word, guess)
 
-    feedback =
-      guess
-      |> String.codepoints()
-      |> Enum.with_index()
-      |> Enum.map_join(fn {letter, pos} ->
-        cond do
-          letter == String.at(game.right_word, pos) -> "2"
-          String.contains?(game.right_word, letter) -> "1"
-          true -> "0"
-        end
-      end)
-
-    {%{game | guesses: guesses}, feedback}
+    {put_guess(game, guess), feedback}
   end
 
-  @spec exact_matches(map(), String.t(), String.t(), integer) :: map()
-  def exact_matches(feedback_so_far \\ %{}, guess, word, position \\ 0)
-  def exact_matches(feedback_so_far, "", "", _position), do: feedback_so_far
-
-  def exact_matches(feedback_so_far, guess, word, position) do
-    {guessed_letter, guess} = String.split_at(guess, 1)
-    {correct_letter, word} = String.split_at(word, 1)
-
-    guessed_letter
-    |> case do
-      ^correct_letter -> feedback_so_far |> Map.put(position, "2")
-      _ -> feedback_so_far
-    end
-    |> exact_matches(guess, word, position + 1)
+  @spec put_guess(t(), String.t()) :: t()
+  defp put_guess(game, guess) do
+    %{game | guesses: [guess | game.guesses]}
   end
 
+  @spec check_word_validity(t(), String.t()) :: :ok
   defp check_word_validity(game, guess) do
     cond do
       guess not in game.wordlist ->

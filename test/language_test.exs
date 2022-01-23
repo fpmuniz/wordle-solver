@@ -1,7 +1,5 @@
 defmodule LanguageTest do
   use ExUnit.Case, async: true
-  alias Wordle.Language
-
   doctest Language
 
   describe "normalize/2 with :pt_br language" do
@@ -15,7 +13,7 @@ defmodule LanguageTest do
         ?A..?z
         |> Enum.to_list()
         |> to_string()
-        |> String.codepoints()
+        |> String.graphemes()
 
       assert Language.normalize(words, :pt_br) == words
     end

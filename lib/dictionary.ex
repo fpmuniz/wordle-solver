@@ -1,4 +1,4 @@
-defmodule Wordle.Parser do
+defmodule Dictionary do
   @moduledoc ~S"""
   Allows you to do low-level operations regarding the reading and parsing of a dictionary file.
 
@@ -6,17 +6,17 @@ defmodule Wordle.Parser do
   words you already have. What is usually done is you import the dictionary file, and then parse it
   using the other functions contained in this file.
 
-  iex> words = Parser.import_dictionary("dicts/test.txt")
+  iex> words = Dictionary.import_dictionary("dicts/test.txt")
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Parser.downcase(words)
+  iex> Dictionary.downcase(words)
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "pumpkin", "texas", ""]
-  iex> Parser.trim(words)
+  iex> Dictionary.trim(words)
   ["don't", "clear", "here", "downtown", "faces", "study", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Parser.filter_valid(words)
+  iex> Dictionary.filter_valid(words)
   ["here", "faces", "translate", "will"]
-  iex> Parser.filter_valid(words, ~r/^[A-z']+$/)  # allow
+  iex> Dictionary.filter_valid(words, ~r/^[A-z']+$/)  # allow
   ["don't", "here", "faces", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas"]
-  iex> Parser.filter_number_of_letters(words, 4)
+  iex> Dictionary.filter_number_of_letters(words, 4)
   ["here", "will"]
   """
 

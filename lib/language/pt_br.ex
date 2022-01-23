@@ -1,4 +1,4 @@
-defmodule Wordle.Language.PtBr do
+defmodule Language.PtBr do
   @moduledoc false
 
   @a_accents ~w(ã â á à)
@@ -17,11 +17,11 @@ defmodule Wordle.Language.PtBr do
   @spec normalize(String.t()) :: String.t()
   def normalize(word) do
     word
-    |> String.codepoints()
+    |> String.graphemes()
     |> Enum.map_join(&replace_accent/1)
   end
 
-  @spec replace_accent(String.codepoint()) :: String.codepoint()
+  @spec replace_accent(String.grapheme()) :: String.grapheme()
   defp replace_accent(l) when l in @a_accents, do: "a"
   defp replace_accent(l) when l in @c_accents, do: "c"
   defp replace_accent(l) when l in @e_accents, do: "e"

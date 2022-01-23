@@ -1,4 +1,4 @@
-defmodule Wordle.Language.En do
+defmodule Language.En do
   @moduledoc false
 
   @spec normalize(String.t()) :: String.t()

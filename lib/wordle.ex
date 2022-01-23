@@ -8,19 +8,19 @@ defmodule Wordle do
   """
 
   alias Wordle.Game
-  alias Wordle.Parser
+  alias Dictionary
   alias Wordle.Solver
 
   @spec from_dict(String.t()) :: [String.t()]
   def from_dict(dict_name) do
-    Parser.import_dictionary("dicts/#{dict_name}.txt")
+    Dictionary.import_dictionary("dicts/#{dict_name}.txt")
   end
 
   @spec to_dict([String.t()], String.t()) :: :ok
   def to_dict(wordlist, dict_name) do
     path = "dicts/#{dict_name}.txt"
 
-    Parser.write_to_file(wordlist, path)
+    Dictionary.write_to_file(wordlist, path)
   end
 
   @spec solve([String.t()], String.t()) :: {:ok | :error, [String.t()]}

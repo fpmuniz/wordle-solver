@@ -1,13 +1,13 @@
-defmodule Wordle.WordStats do
+defmodule Score do
   @moduledoc ~S"""
   This module allows you to create statistics about frequency of letters in a given list of words
   (or even strings in general). It is mostly used by the Wordle module, but you can use it manually
   aswell.
 
   iex> words = ["hi", "hello"]
-  iex> frequencies = WordStats.letter_frequencies(words)
+  iex> frequencies = Score.letter_frequencies(words)
   %{"e" => 1, "h" => 2, "i" => 1, "l" => 2, "o" => 1}
-  iex> WordStats.order_by_scores(words, frequencies)
+  iex> Score.order_by_scores(words, frequencies)
   ["hello", "hi"]
   """
 
@@ -40,7 +40,7 @@ defmodule Wordle.WordStats do
 
   defp word_score(word, letter_frequencies) do
     word
-    |> String.codepoints()
+    |> String.graphemes()
     |> Enum.uniq()
     |> Enum.reduce(0, fn letter, acc_score ->
       acc_score + Map.get(letter_frequencies, letter)
@@ -49,7 +49,7 @@ defmodule Wordle.WordStats do
 
   defp get_letter_count(word) do
     word
-    |> String.codepoints()
+    |> String.graphemes()
     |> Enum.frequencies()
   end
 end

@@ -2,77 +2,68 @@ defmodule Wordle.FeedbackTest do
   use ExUnit.Case, async: true
   alias Wordle.Feedback
 
-  describe "new/2" do
-    test "creates a list of zeros" do
-      assert %Feedback{acc: ~w(0 0 0 0)} = Feedback.new("test", "done")
-    end
-
-    test "counts graphemes in the right word" do
-      assert %Feedback{counts: counts} = Feedback.new("test", "done")
-      assert counts == %{"t" => 2, "e" => 1, "s" => 1}
-    end
-  end
-
-  describe "exact_matches/1" do
+  describe "build/2" do
     test "puts '2's into the correctly guessed graphemes positions" do
-      feedback = Feedback.new("test", "temp")
-      assert %Feedback{acc: acc} = Feedback.exact_matches(feedback)
-      assert acc == ~w"2 2 0 0"
+      assert "2200" = Feedback.build("test", "temp")
     end
 
-    test "reduces the count of correctly guessed graphemes" do
-      assert %{counts: counts} = feedback = Feedback.new("test", "temp")
-      assert counts == %{"t" => 2, "e" => 1, "s" => 1}
-      assert %Feedback{counts: counts} = Feedback.exact_matches(feedback)
-      assert counts == %{"t" => 1, "e" => 0, "s" => 1}
+    test "maintains the correct count of letters" do
+      assert "2211" = Feedback.build("test", "tets")
     end
 
-    test "resets position to 0 at the end" do
-      feedback = Feedback.new("test", "temp")
-      assert %Feedback{position: 0} = Feedback.exact_matches(feedback)
-    end
-  end
-
-  describe "partial_matches/1" do
     test "puts '1's into the correctly guessed graphemes" do
-      feedback = Feedback.new("test", "done")
-      assert %Feedback{acc: acc} = Feedback.partial_matches(feedback)
-      assert acc == ~w(0 0 0 1)
+      assert "0001" = Feedback.build("test", "done")
     end
 
     test "does not put '1' when the grapheme has already been guessed before" do
-      feedback = Feedback.new("test", "exxe")
-      assert %Feedback{acc: acc} = Feedback.partial_matches(feedback)
-      assert acc == ~w(1 0 0 0 )
+      assert "1000" = Feedback.build("test", "exxe")
     end
 
     test "does not put '1' when the grapheme has been guessed before at right position" do
-      feedback = "test" |> Feedback.new("eeee") |> Feedback.exact_matches()
-      assert %Feedback{acc: acc} = Feedback.partial_matches(feedback)
-      assert acc == ~w(0 2 0 0 )
+      assert "0200" = Feedback.build("test", "eeee")
     end
 
     test "puts multiple '1's when there is repetition in the right and guessed words" do
-      feedback = "aaaaaa" |> Feedback.new("banana") |> Feedback.partial_matches()
-      assert %Feedback{acc: acc} = feedback
-      assert acc == ~w(0 1 0 1 0 1)
+      assert "110101" = Feedback.build("ababab", "banana")
     end
 
     test "stops counting correct graphemes after all letter counts have been found" do
-      feedback = "banana" |> Feedback.new("aaaaaa") |> Feedback.partial_matches()
-      assert %Feedback{acc: acc} = feedback
-      assert acc == ~w(1 1 1 0 0 0)
+      assert "110000" = Feedback.build("bbbaac", "aaaxxx")
     end
 
     test "still counts letters when correct position guesses have been used and there's still more repetitions" do
-      feedback =
-        "banana"
-        |> Feedback.new("aaaaax")
-        |> Feedback.exact_matches()
-        |> Feedback.partial_matches()
+      assert "120200" = Feedback.build("banana", "aaaaax")
+    end
+  end
 
-      assert %Feedback{acc: acc} = feedback
-      assert acc == ~w(1 2 0 2 0 0)
+  describe "maxmin/2" do
+    test "works as expected when there is no grapheme repetition" do
+      # right word: 'words'; guessed word: 'dwarf'
+
+      counts = Feedback.maxmin("dwarf", "11010")
+      assert counts["d"] == [max: 5, min: 1]
+      assert counts["w"] == [max: 5, min: 1]
+      assert counts["a"] == [max: 0, min: 0]
+      assert counts["r"] == [max: 5, min: 1]
+      assert counts["f"] == [max: 0, min: 0]
+    end
+
+    test "sets minimum count to # of graphemes repeated in guessed word" do
+      # right word: 'bobby'; guessed word: 'booby'
+
+      counts = Feedback.maxmin("booby", "22022")
+      assert counts["b"] == [max: 5, min: 2]
+      assert counts["o"] == [max: 1, min: 1]
+      assert counts["y"] == [max: 5, min: 1]
+    end
+
+    test "sets maximum count to # of graphemes repeated in guessed word when exceeding" do
+      # right word: 'booby'; guessed word: 'bobby'
+
+      counts = Feedback.maxmin("bobby", "22022")
+      assert counts["b"] == [max: 2, min: 2]
+      assert counts["o"] == [max: 5, min: 1]
+      assert counts["y"] == [max: 5, min: 1]
     end
   end
 end

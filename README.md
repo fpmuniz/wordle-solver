@@ -24,12 +24,12 @@ dictionary into `dicts/pt_br.txt`, you can start a simple Wordle game by running
 
 ```elixir
 iex> words = "dicts/pt_br.txt"
-iex> |> Parser.import_dictionary()        # reads a dict file and converts it into a list of strings
-iex> |> Parser.trim()                     # trims all trailing whitespace
+iex> |> Dictionary.import_dictionary()        # reads a dict file and converts it into a list of strings
+iex> |> Dictionary.trim()                     # trims all trailing whitespace
 iex> |> Language.normalize(:pt_br)        # removes accents and diacritics
-iex> |> Parser.filter_number_of_letters(5) # drops words with 6+ or 4- letters
-iex> |> Parser.filter_valid()             # removes words that aren't exclusively lowcase a-z
-iex> |> WordStats.order_by_scores()       # calculates each word's score based on how many good letters it has and then sorts in desc score order
+iex> |> Dictionary.filter_number_of_letters(5) # drops words with 6+ or 4- letters
+iex> |> Dictionary.filter_valid()             # removes words that aren't exclusively lowcase a-z
+iex> |> Score.order_by_scores()       # calculates each word's score based on how many good letters it has and then sorts in desc score order
 ["rosea", "serao", "roias", "roais", "raios", "orais", "raies", "areis",
  "aires", "seria", "sarei", "reais", "eiras", "meiao", "moera", "aremo",
  "remoa", "aureo", "ecoai", "ecoar", "ateio", "terao", "rotea", "reato",

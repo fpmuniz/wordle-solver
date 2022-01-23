@@ -13,9 +13,10 @@ defmodule Wordle.Solver do
   %Wordle.Solver{complements: ["done", "stay"], wordlist: ["gone"]}
   """
 
+  alias Wordle.Feedback
   alias Wordle.Game
   alias Wordle.Solver
-  alias Wordle.WordStats
+  alias Score
 
   @type t :: %Solver{
           wordlist: [String.t()],
@@ -38,12 +39,13 @@ defmodule Wordle.Solver do
   def feedback(solver, guess, feedback) do
     updated_wordlist =
       feedback
-      |> String.codepoints()
+      |> String.graphemes()
       |> Enum.with_index()
       |> Enum.reduce(solver.wordlist, fn {letter_feedback, pos}, w ->
         letter = String.at(guess, pos)
-        update_with_letter_feedback(w, letter, pos, letter_feedback)
+        update_with_grapheme_feedback(w, letter, pos, letter_feedback)
       end)
+      |> filter_wordlist_by_maxmin(Feedback.maxmin(guess, feedback))
 
     %{solver | wordlist: updated_wordlist}
   end
@@ -54,8 +56,8 @@ defmodule Wordle.Solver do
 
   def first_guesses([hd | _tl] = wordlist, guesses) do
     hd
-    |> String.codepoints()
-    |> Enum.reduce(wordlist, fn letter, wordlist -> wrong_letter(wordlist, letter) end)
+    |> String.graphemes()
+    |> Enum.reduce(wordlist, fn grapheme, wordlist -> reject_grapheme(wordlist, grapheme) end)
     |> first_guesses(guesses ++ [hd])
   end
 
@@ -105,35 +107,53 @@ defmodule Wordle.Solver do
     |> solve_randomly(game)
   end
 
-  @spec update_with_letter_feedback([String.t()], String.t(), integer(), String.t()) :: [
+  @spec update_with_grapheme_feedback([String.t()], String.grapheme(), integer(), String.t()) :: [
           String.t()
         ]
-  defp update_with_letter_feedback(wordlist, letter, position, feedback) do
+  defp update_with_grapheme_feedback(wordlist, grapheme, position, feedback) do
     case feedback do
-      "0" -> wrong_letter(wordlist, letter)
-      "1" -> wrong_position(wordlist, letter, position)
-      "2" -> right_position(wordlist, letter, position)
+      "0" -> wordlist
+      "1" -> wrong_position(wordlist, grapheme, position)
+      "2" -> right_position(wordlist, grapheme, position)
     end
   end
 
-  @spec wrong_letter([String.t()], String.t()) :: [String.t()]
-  defp wrong_letter(wordlist, letter) do
-    Enum.reject(wordlist, &String.contains?(&1, letter))
+  @spec reject_grapheme([String.t()], String.grapheme()) :: [String.t()]
+  defp reject_grapheme(wordlist, grapheme) do
+    Enum.reject(wordlist, &String.contains?(&1, grapheme))
   end
 
-  @spec wrong_position([String.t()], String.t(), integer()) :: [String.t()]
-  defp wrong_position(wordlist, letter, position) do
+  @spec wrong_position([String.t()], String.grapheme(), integer()) :: [String.t()]
+  defp wrong_position(wordlist, grapheme, position) do
     wordlist
-    |> Enum.filter(&String.contains?(&1, letter))
-    |> Enum.reject(&(String.at(&1, position) == letter))
+    |> Enum.filter(&String.contains?(&1, grapheme))
+    |> Enum.reject(&(String.at(&1, position) == grapheme))
   end
 
-  @spec right_position([String.t()], String.t(), integer()) :: [String.t()]
-  defp right_position(wordlist, letter, position) do
-    Enum.filter(wordlist, &(String.at(&1, position) == letter))
+  @spec right_position([String.t()], String.grapheme(), integer()) :: [String.t()]
+  defp right_position(wordlist, grapheme, position) do
+    Enum.filter(wordlist, &(String.at(&1, position) == grapheme))
   end
 
+  @spec order_by_scores(t()) :: t()
   defp order_by_scores(solver) do
-    %{solver | wordlist: WordStats.order_by_scores(solver.wordlist)}
+    %{solver | wordlist: Score.order_by_scores(solver.wordlist)}
+  end
+
+  @spec filter_wordlist_by_maxmin([String.t()], Feedback.maxmin()) :: [String.t()]
+  defp filter_wordlist_by_maxmin(wordlist, maxmin) do
+    Enum.filter(wordlist, fn word ->
+      counts = Feedback.grapheme_counts(word)
+
+      maxmin
+      |> Map.keys()
+      |> Enum.reduce(true, fn grapheme, acc ->
+        max = maxmin[grapheme][:max]
+        min = maxmin[grapheme][:min]
+        count = Map.get(counts, grapheme, 0)
+
+        acc and count <= max and count >= min
+      end)
+    end)
   end
 end

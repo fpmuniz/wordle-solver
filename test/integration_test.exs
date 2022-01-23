@@ -37,7 +37,7 @@ defmodule IntegrationTest do
 
   @spec full_dict_stats(String.t(), integer()) :: %{integer() => integer()}
   defp full_dict_stats(dict_name, max_guesses, solver_fn \\ &Wordle.solve/2) do
-    words = Dictionary.import(dict_name)
+    words = Lexicon.import(dict_name)
 
     words
     |> Task.async_stream(fn right_word ->

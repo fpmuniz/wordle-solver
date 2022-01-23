@@ -1,7 +1,7 @@
 # WordleSolver
 
 This is a very simple, CLI-based program to solve password/word games of the likes of 
-[Wordle](https://www.powerlanguage.co.uk/wordle/). You will need to download a dictionary of words
+[Wordle](https://www.powerlanguage.co.uk/wordle/). You will need to download a lexicon of words
 for the language you want to play it with. For portuguese/br, you can find a great one [right here]
 (https://www.ime.usp.br/~pf/dicios/index.html). I didn't include it in the project because even
 though it is generated under a GPL licence, it has probably taken IME a lot of effort in order to
@@ -20,15 +20,15 @@ iex -S mix
 ```
 
 In order to start using, let's say you want to play a game in PT-BR. If you donwloaded your
-dictionary into `dicts/pt_br.txt`, you can start a simple Wordle game by running:
+lexicon into `dicts/pt_br.txt`, you can start a simple Wordle game by running:
 
 ```elixir
 iex> words = "dicts/pt_br.txt"
-iex> |> Dictionary.import()        # reads a dict file and converts it into a list of strings
-iex> |> Dictionary.trim()                     # trims all trailing whitespace
+iex> |> Lexicon.import()        # reads a dict file and converts it into a list of strings
+iex> |> Lexicon.trim()                     # trims all trailing whitespace
 iex> |> Language.normalize(:pt_br)        # removes accents and diacritics
-iex> |> Dictionary.filter_by_number_of_graphenes(5) # drops words with 6+ or 4- letters
-iex> |> Dictionary.filter_valid()             # removes words that aren't exclusively lowcase a-z
+iex> |> Lexicon.filter_by_number_of_graphenes(5) # drops words with 6+ or 4- letters
+iex> |> Lexicon.filter_valid()             # removes words that aren't exclusively lowcase a-z
 iex> |> Grapheme.order_by_scores()       # calculates each word's score based on how many good letters it has and then sorts in desc score order
 ["rosea", "serao", "roias", "roais", "raios", "orais", "raies", "areis",
  "aires", "seria", "sarei", "reais", "eiras", "meiao", "moera", "aremo",

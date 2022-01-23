@@ -1,22 +1,22 @@
-defmodule Dictionary do
+defmodule Lexicon do
   @moduledoc ~S"""
-  Allows you to do low-level operations regarding the reading and parsing of a dictionary file.
+  Allows you to do low-level operations regarding the reading and parsing of a lexicon file.
 
-  You can import a dictionary whose words are separated by line breaks, or simply use a list of
-  words you already have. What is usually done is you import the dictionary file, and then parse it
+  You can import a lexicon whose words are separated by line breaks, or simply use a list of
+  words you already have. What is usually done is you import the lexicon file, and then parse it
   using the other functions contained in this file.
 
-  iex> words = Dictionary.import("test")
+  iex> words = Lexicon.import("test")
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Dictionary.downcase(words)
+  iex> Lexicon.downcase(words)
   ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "pumpkin", "texas", ""]
-  iex> Dictionary.trim(words)
+  iex> Lexicon.trim(words)
   ["don't", "clear", "here", "downtown", "faces", "study", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Dictionary.filter_valid(words)
+  iex> Lexicon.filter_valid(words)
   ["here", "faces", "translate", "will"]
-  iex> Dictionary.filter_valid(words, ~r/^[A-z']+$/)  # allow
+  iex> Lexicon.filter_valid(words, ~r/^[A-z']+$/)  # allow
   ["don't", "here", "faces", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas"]
-  iex> Dictionary.filter_by_number_of_graphenes(words, 4)
+  iex> Lexicon.filter_by_number_of_graphenes(words, 4)
   ["here", "will"]
   """
 

@@ -16,7 +16,7 @@ defmodule Language do
 
   @callback normalize(word :: String.t()) :: String.t()
 
-  @spec normalize(Dictionary.t(), atom()) :: Dictionary.t()
+  @spec normalize(Lexicon.t(), atom()) :: Lexicon.t()
   def normalize(dict, :pt_br), do: dict |> Enum.map(&PtBr.normalize/1)
   def normalize(dict, :en), do: dict |> Enum.map(&En.normalize/1)
 end

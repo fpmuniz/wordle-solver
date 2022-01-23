@@ -19,13 +19,13 @@ defmodule Wordle.Solver do
   alias Grapheme
 
   @type t :: %Solver{
-          wordlist: Dictionary.t(),
-          complements: Dictionary.t()
+          wordlist: Lexicon.t(),
+          complements: Lexicon.t()
         }
 
   defstruct wordlist: [], complements: []
 
-  @spec new(Dictionary.t()) :: t()
+  @spec new(Lexicon.t()) :: t()
   def new(wordlist) do
     %Solver{wordlist: wordlist, complements: first_guesses(wordlist)}
   end
@@ -50,7 +50,7 @@ defmodule Wordle.Solver do
     %{solver | wordlist: updated_wordlist}
   end
 
-  @spec first_guesses(Dictionary.t(), Dictionary.t()) :: Dictionary.t()
+  @spec first_guesses(Lexicon.t(), Lexicon.t()) :: Lexicon.t()
   def first_guesses(wordlist, guesses \\ [])
   def first_guesses([], guesses), do: guesses
 
@@ -61,7 +61,7 @@ defmodule Wordle.Solver do
     |> first_guesses(guesses ++ [hd])
   end
 
-  @spec solve(t(), Game.t()) :: {:error | :ok, Dictionary.t()}
+  @spec solve(t(), Game.t()) :: {:error | :ok, Lexicon.t()}
   def solve(%Solver{wordlist: []}, %Game{guesses: guesses}), do: {:error, guesses}
 
   def solve(%Solver{wordlist: [best_guess | _]}, %Game{right_word: best_guess, guesses: guesses}),
@@ -93,7 +93,7 @@ defmodule Wordle.Solver do
     |> solve(game)
   end
 
-  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, Dictionary.t()}
+  @spec solve_randomly(t(), Game.t()) :: {:ok | :error, Lexicon.t()}
   def solve_randomly(%{wordlist: []}, %{guesses: guesses}), do: {:error, guesses}
 
   def solve_randomly(%{wordlist: [right_word | _]}, %{guesses: guesses, right_word: right_word}),
@@ -110,7 +110,7 @@ defmodule Wordle.Solver do
     |> solve_randomly(game)
   end
 
-  @spec update_with_grapheme_feedback(Dictionary.t(), Grapheme.t(), integer(), String.t()) ::
+  @spec update_with_grapheme_feedback(Lexicon.t(), Grapheme.t(), integer(), String.t()) ::
           [
             String.t()
           ]
@@ -122,19 +122,19 @@ defmodule Wordle.Solver do
     end
   end
 
-  @spec reject_grapheme(Dictionary.t(), Grapheme.t()) :: Dictionary.t()
+  @spec reject_grapheme(Lexicon.t(), Grapheme.t()) :: Lexicon.t()
   defp reject_grapheme(wordlist, grapheme) do
     Enum.reject(wordlist, &String.contains?(&1, grapheme))
   end
 
-  @spec wrong_position(Dictionary.t(), Grapheme.t(), integer()) :: Dictionary.t()
+  @spec wrong_position(Lexicon.t(), Grapheme.t(), integer()) :: Lexicon.t()
   defp wrong_position(wordlist, grapheme, position) do
     wordlist
     |> Enum.filter(&String.contains?(&1, grapheme))
     |> Enum.reject(&(String.at(&1, position) == grapheme))
   end
 
-  @spec right_position(Dictionary.t(), Grapheme.t(), integer()) :: Dictionary.t()
+  @spec right_position(Lexicon.t(), Grapheme.t(), integer()) :: Lexicon.t()
   defp right_position(wordlist, grapheme, position) do
     Enum.filter(wordlist, &(String.at(&1, position) == grapheme))
   end
@@ -144,7 +144,7 @@ defmodule Wordle.Solver do
     %{solver | wordlist: Grapheme.order_by_scores(solver.wordlist)}
   end
 
-  @spec filter_wordlist_by_maxmin(Dictionary.t(), Feedback.maxmin()) :: Dictionary.t()
+  @spec filter_wordlist_by_maxmin(Lexicon.t(), Feedback.maxmin()) :: Lexicon.t()
   defp filter_wordlist_by_maxmin(wordlist, maxmin) do
     Enum.filter(wordlist, fn word ->
       counts = Grapheme.counts(word)

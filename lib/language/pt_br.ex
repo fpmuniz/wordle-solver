@@ -23,6 +23,15 @@ defmodule Language.PtBr do
     |> Enum.map_join(&replace_accent/1)
   end
 
+  @impl true
+  @spec valid_graphemes() :: [Grapheme.t()]
+  def valid_graphemes() do
+    ?a..?z
+    |> Enum.to_list()
+    |> to_string()
+    |> String.codepoints()
+  end
+
   @spec replace_accent(Grapheme.t()) :: Grapheme.t()
   defp replace_accent(l) when l in @a_accents, do: "a"
   defp replace_accent(l) when l in @c_accents, do: "c"

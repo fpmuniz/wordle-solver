@@ -23,9 +23,11 @@ defmodule Lexicon do
 
   @type t :: [String.t()]
 
+  @path "lib/lexicon"
+
   @spec import(String.t()) :: t()
   def import(name) do
-    "lexicons/#{name}.txt"
+    "#{@path}/#{name}.txt"
     |> File.read!()
     |> String.split("\n")
   end
@@ -48,6 +50,6 @@ defmodule Lexicon do
     dict
     |> Enum.join("\n")
     |> String.trim()
-    |> (&File.write!("lexicons/#{name}.txt", &1)).()
+    |> (&File.write!("#{@path}/#{name}.txt", &1)).()
   end
 end

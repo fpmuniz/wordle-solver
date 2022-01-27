@@ -1,5 +1,7 @@
 defmodule Linguistics do
-  @type lexicon :: Linguistics.Lexicon.t()
+  @type grapheme :: Linguistics.Word.grapheme()
+  @type word :: Linguistics.Word.t()
   @type language :: Linguistics.Language.t()
-  @type grapheme :: Linguistics.Grapheme.t()
+  @type lexicon :: Linguistics.Lexicon.t()
+  @type counts :: %{grapheme() => integer()}
 end

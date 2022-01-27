@@ -49,7 +49,6 @@ defmodule IntegrationTest do
   end
 
   describe "Wordle.solve/3 with missing_graphemes strategy" do
-    @describetag :wip
     test "solves all words in wordle dict with 8 or less attempts" do
       check_stats(:wordle, 8, :missing_graphemes)
     end

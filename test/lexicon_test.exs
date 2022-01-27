@@ -2,10 +2,10 @@ defmodule LexiconTest do
   alias Linguistics.Lexicon
   use ExUnit.Case, async: true
 
-  describe "filter_by_number_of_graphenes/1" do
+  describe "filter_by_length/1" do
     test "only returns 5 letter words" do
       words = ~w(do you wanna see five letter words now)
-      assert Lexicon.filter_by_number_of_graphenes(words, 5) == ~w(wanna words)
+      assert Lexicon.filter_by_length(words, 5) == ~w(wanna words)
     end
   end
 

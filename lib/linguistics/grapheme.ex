@@ -5,7 +5,7 @@ defmodule Linguistics.Grapheme do
   @type counts :: %{t() => integer()}
   @type score :: %{t() => number()}
 
-  @spec letter_frequencies(Lexicon.t()) :: map
+  @spec letter_frequencies(Lexicon.t()) :: counts()
   def letter_frequencies(lexicon) do
     lexicon
     |> Enum.map(&counts/1)
@@ -32,7 +32,7 @@ defmodule Linguistics.Grapheme do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @spec counts(String.t()) :: score()
+  @spec counts(String.t()) :: counts()
   def counts(word) do
     word
     |> String.graphemes()

@@ -1,4 +1,5 @@
 defmodule IntegrationTest do
+  alias Linguistics.Lexicon
   use ExUnit.Case, async: true
 
   @moduletag :integration

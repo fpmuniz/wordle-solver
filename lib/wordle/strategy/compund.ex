@@ -1,6 +1,7 @@
 defmodule Wordle.Strategy.Compound do
   alias Wordle.Game
   alias Wordle.Strategy
+  alias Linguistics.Lexicon
 
   @behaviour Wordle.Strategy
 

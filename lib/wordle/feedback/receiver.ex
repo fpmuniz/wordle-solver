@@ -1,4 +1,7 @@
 defmodule Wordle.Feedback.Receiver do
+  alias Linguistics.Grapheme
+  alias Linguistics.Lexicon
+
   @type maxmin :: %{Grapheme.t() => [max: integer(), min: integer()]}
 
   @spec filter(Lexicon.t(), String.t(), String.t()) :: Lexicon.t()

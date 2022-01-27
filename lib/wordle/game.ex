@@ -1,6 +1,9 @@
 defmodule Wordle.Game do
   alias Wordle.Game
   alias Wordle.Feedback
+  alias Linguistics.Language
+  alias Linguistics.Lexicon
+  alias Linguistics.Grapheme
 
   @type t :: %Game{
           guesses: Lexicon.t(),

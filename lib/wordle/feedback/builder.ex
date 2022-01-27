@@ -1,5 +1,6 @@
 defmodule Wordle.Feedback.Builder do
   alias Wordle.Feedback.Builder
+  alias Linguistics.Grapheme
 
   defstruct [:acc, :counts, :right_word, :guessed_word, :size, position: 0]
 

@@ -1,4 +1,5 @@
 defmodule GraphemeTest do
+  alias Linguistics.Grapheme
   use ExUnit.Case, async: true
 
   describe "letter_frequencies/1" do

@@ -1,4 +1,5 @@
 defmodule LexiconTest do
+  alias Linguistics.Lexicon
   use ExUnit.Case, async: true
 
   describe "filter_by_number_of_graphenes/1" do

@@ -1,6 +1,8 @@
-defmodule Language do
-  alias Language.En
-  alias Language.PtBr
+defmodule Linguistics.Language do
+  alias Linguistics.Language.En
+  alias Linguistics.Language.PtBr
+  alias Linguistics.Grapheme
+  alias Linguistics.Lexicon
 
   @languages %{
     en: En,

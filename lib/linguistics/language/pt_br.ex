@@ -1,5 +1,7 @@
-defmodule Language.PtBr do
-  @behaviour Language
+defmodule Linguistics.Language.PtBr do
+  alias Linguistics.Grapheme
+
+  @behaviour Linguistics.Language
 
   @a_accents ~w(ã â á à)
   @c_accents ~w(ç)

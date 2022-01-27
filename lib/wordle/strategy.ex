@@ -6,6 +6,8 @@ defmodule Wordle.Strategy do
   alias Wordle.Strategy.Simple
   alias Wordle.Strategy.Random
 
+  alias Linguistics.Lexicon
+
   @callback solve(Lexicon.t(), Game.t()) :: {:ok | :error, Game.t(), Lexicon.t()}
 
   @strategies %{

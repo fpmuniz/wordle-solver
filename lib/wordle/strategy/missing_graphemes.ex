@@ -1,6 +1,8 @@
 defmodule Wordle.Strategy.MissingGraphemes do
   alias Wordle.Game
   alias Wordle.Feedback
+  alias Linguistics.Grapheme
+  alias Linguistics.Lexicon
 
   @behaviour Wordle.Strategy
 

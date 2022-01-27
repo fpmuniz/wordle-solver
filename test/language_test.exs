@@ -1,4 +1,5 @@
 defmodule LanguageTest do
+  alias Linguistics.Language
   use ExUnit.Case, async: true
 
   describe "normalize/2 with :pt_br language" do

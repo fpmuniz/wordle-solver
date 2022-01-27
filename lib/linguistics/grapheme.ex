@@ -1,4 +1,6 @@
-defmodule Grapheme do
+defmodule Linguistics.Grapheme do
+  alias Linguistics.Lexicon
+
   @type t :: String.grapheme()
   @type counts :: %{t() => integer()}
   @type score :: %{t() => number()}

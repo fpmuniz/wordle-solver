@@ -1,7 +1,7 @@
-defmodule Lexicon do
+defmodule Linguistics.Lexicon do
   @type t :: [String.t()]
 
-  @path "lib/lexicon"
+  @path "lib/linguistics/lexicon"
 
   @spec import(String.t()) :: t()
   def import(name) do

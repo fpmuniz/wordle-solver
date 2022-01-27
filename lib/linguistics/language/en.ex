@@ -1,5 +1,7 @@
-defmodule Language.En do
-  @behaviour Language
+defmodule Linguistics.Language.En do
+  alias Linguistics.Grapheme
+
+  @behaviour Linguistics.Language
 
   @impl true
   @spec valid_graphemes() :: [Grapheme.t()]

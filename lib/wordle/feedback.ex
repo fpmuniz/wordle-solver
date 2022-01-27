@@ -1,6 +1,7 @@
 defmodule Wordle.Feedback do
   alias Wordle.Feedback.Builder
   alias Wordle.Feedback.Receiver
+  alias Linguistics.Lexicon
 
   @spec build(String.t(), String.t()) :: String.t()
   def build(right_word, guessed_word) do

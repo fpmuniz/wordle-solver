@@ -1,5 +1,4 @@
 defmodule Language.PtBr do
-  @moduledoc false
   @behaviour Language
 
   @a_accents ~w(ã â á à)

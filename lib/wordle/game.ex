@@ -1,22 +1,4 @@
 defmodule Wordle.Game do
-  @moduledoc ~S"""
-  Basic state of an wordle game. The struct in this file retains information about the game,
-  including the expected word and which guesses have already been taken.
-
-  Usage:
-  iex> wordlist = ~w(some word gone)
-  iex> game = Game.new(wordlist, "word")
-  %Wordle.Game{guesses: [], right_word: "word", wordlist: ["some", "word", "gone"], graphemes: %{"a" => :unknown, "b" => :unknown, "c" => :unknown, "d" => :unknown, "e" => :unknown, "f" => :unknown, "g" => :unknown, "h" => :unknown, "i" => :unknown, "j" => :unknown, "k" => :unknown, "l" => :unknown, "m" => :unknown, "n" => :unknown, "o" => :unknown, "p" => :unknown, "q" => :unknown, "r" => :unknown, "s" => :unknown, "t" => :unknown, "u" => :unknown, "v" => :unknown, "w" => :unknown, "x" => :unknown, "y" => :unknown, "z" => :unknown}}
-  iex> game = Game.guess(game, "gone")
-  iex> game.feedbacks
-  ["0200"]
-  iex> game = Game.guess(game, "word")
-  iex> game.feedbacks
-  ["2222", "0200"]
-  iex> game.guesses
-  ["word", "gone"]
-  """
-
   alias Wordle.Game
   alias Wordle.Feedback
 
@@ -25,9 +7,11 @@ defmodule Wordle.Game do
           feedbacks: Lexicon.t(),
           right_word: String.t(),
           wordlist: Lexicon.t(),
-          graphemes: %{Grapheme.t() => atom()}
+          graphemes: %{Grapheme.t() => classification()}
         }
   @type counts :: %{Grapheme.t() => integer()}
+  @type classification :: :unknown | :invalid | :misplaced | :correct
+
   @default_valid_graphemes Language.valid_graphemes(:en)
 
   defstruct [
@@ -119,7 +103,7 @@ defmodule Wordle.Game do
     end
   end
 
-  @spec build_graphemes([Grapheme.t()]) :: %{Grapheme.t() => atom()}
+  @spec build_graphemes([Grapheme.t()]) :: %{Grapheme.t() => classification()}
   defp build_graphemes(graphemes) do
     graphemes
     |> Enum.map(fn grapheme ->

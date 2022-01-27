@@ -1,26 +1,4 @@
 defmodule Lexicon do
-  @moduledoc ~S"""
-  Allows you to do low-level operations regarding the reading and parsing of a lexicon file. A
-  lexicon file is simply a file with a list of words separated by line breaks.
-
-  You can import a lexicon whose words are separated by line breaks, or simply use a list of
-  words you already have. What is usually done is you import the lexicon file, and then parse it
-  using the other functions contained in this file.
-
-  iex> words = Lexicon.import("test")
-  ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Lexicon.downcase(words)
-  ["don't", "  clear", "here", "downtown   ", "faces", " study  ", "translate", "we'll", "will", "weren't", "pumpkin", "texas", ""]
-  iex> Lexicon.trim(words)
-  ["don't", "clear", "here", "downtown", "faces", "study", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas", ""]
-  iex> Lexicon.filter_valid(words)
-  ["here", "faces", "translate", "will"]
-  iex> Lexicon.filter_valid(words, ~r/^[A-z']+$/)  # allow
-  ["don't", "here", "faces", "translate", "we'll", "will", "weren't", "PUMPKIN", "Texas"]
-  iex> Lexicon.filter_by_number_of_graphenes(words, 4)
-  ["here", "will"]
-  """
-
   @type t :: [String.t()]
 
   @path "lib/lexicon"

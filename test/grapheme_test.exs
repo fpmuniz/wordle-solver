@@ -1,6 +1,5 @@
 defmodule GraphemeTest do
   use ExUnit.Case, async: true
-  doctest Grapheme
 
   describe "letter_frequencies/1" do
     test "returns frequencies in percentage" do

@@ -1,5 +1,4 @@
 defmodule Language.En do
-  @moduledoc false
   @behaviour Language
 
   @impl true

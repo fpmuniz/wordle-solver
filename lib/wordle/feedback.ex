@@ -13,7 +13,7 @@ defmodule Wordle.Feedback do
 
   @spec filter(Lexicon.t(), String.t()) :: Lexicon.t()
   def filter([], _response), do: []
-  def filter(lexicon = [hd | _], response), do: Receiver.filter(lexicon, hd, response)
+  def filter([hd | _] = lexicon, response), do: Receiver.filter(lexicon, hd, response)
 
   @spec filter(Lexicon.t(), String.t(), String.t()) :: Lexicon.t()
   def filter(lexicon, guess, response), do: Receiver.filter(lexicon, guess, response)

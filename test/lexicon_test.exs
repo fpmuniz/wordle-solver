@@ -1,6 +1,5 @@
 defmodule LexiconTest do
   use ExUnit.Case, async: true
-  doctest Lexicon
 
   describe "filter_by_number_of_graphenes/1" do
     test "only returns 5 letter words" do

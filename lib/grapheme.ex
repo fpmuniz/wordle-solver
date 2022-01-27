@@ -1,26 +1,11 @@
 defmodule Grapheme do
-  @moduledoc ~S"""
-  This module allows you to create statistics about frequency of letters in a given list of words
-  (or even strings in general). It is mostly used by the Wordle module, but you can use it manually
-  aswell.
-
-  iex> words = ["hi", "hello"]
-  iex> frequencies = Grapheme.letter_frequencies(words)
-  %{"e" => 1, "h" => 2, "i" => 1, "l" => 2, "o" => 1}
-  iex> Grapheme.order_by_scores(words, frequencies)
-  ["hello", "hi"]
-  """
-
   @type t :: String.grapheme()
-
-  @typedoc """
-  A map containing a count of graphemes as values and the graphemes themselves as keys.
-  """
   @type counts :: %{t() => integer()}
+  @type score :: %{t() => number()}
 
   @spec letter_frequencies(Lexicon.t()) :: map
-  def letter_frequencies(dict) do
-    dict
+  def letter_frequencies(lexicon) do
+    lexicon
     |> Enum.map(&counts/1)
     |> Enum.reduce(%{}, fn counts, acc ->
       Map.merge(acc, counts, fn _key, count1, count2 -> count1 + count2 end)
@@ -29,14 +14,14 @@ defmodule Grapheme do
   end
 
   @spec order_by_scores(Lexicon.t()) :: Lexicon.t()
-  def order_by_scores(dict) do
-    scores = letter_frequencies(dict)
-    order_by_scores(dict, scores)
+  def order_by_scores(lexicon) do
+    scores = letter_frequencies(lexicon)
+    order_by_scores(lexicon, scores)
   end
 
-  @spec order_by_scores(Lexicon.t(), map()) :: Lexicon.t()
-  def order_by_scores(dict, letter_frequencies) do
-    dict
+  @spec order_by_scores(Lexicon.t(), score()) :: Lexicon.t()
+  def order_by_scores(lexicon, letter_frequencies) do
+    lexicon
     |> Enum.map(fn word ->
       {word, word_score(word, letter_frequencies)}
     end)
@@ -45,7 +30,7 @@ defmodule Grapheme do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @spec counts(String.t()) :: counts()
+  @spec counts(String.t()) :: score()
   def counts(word) do
     word
     |> String.graphemes()

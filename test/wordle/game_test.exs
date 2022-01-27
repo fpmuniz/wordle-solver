@@ -3,8 +3,6 @@ defmodule Wordle.GameTest do
 
   alias Wordle.Game
 
-  doctest Game
-
   describe "new/2" do
     test "generates a new game" do
       assert %Game{} = Game.new(~w(some word gone), "some")

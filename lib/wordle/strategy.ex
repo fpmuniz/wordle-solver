@@ -1,21 +1,8 @@
 defmodule Wordle.Strategy do
-  @moduledoc ~S"""
-  A basic behaviour module with an interface to build new strategies.
-  See Wordle.Strategy.Simple for an example.
-
-  You can also use this as the main interface to interact with solving Wordle games using different
-  strategies, without needing to worry about underlying structs that will be used.
-
-  iex> lexicon = ~w(hello never again raise error)
-  iex> Wordle.Strategy.solve(lexicon, "never")
-  {:ok, ["never", "hello"]}
-  iex> Wordle.Strategy.solve(lexicon, "never", :compound)
-  {:ok, ["never", "hello"]}
-  """
-
   alias Wordle.Game
   alias Wordle.Strategy.Compound
   alias Wordle.Strategy.Complements
+  alias Wordle.Strategy.MissingGraphemes
   alias Wordle.Strategy.Simple
   alias Wordle.Strategy.Random
 
@@ -25,7 +12,8 @@ defmodule Wordle.Strategy do
     simple: Simple,
     random: Random,
     complements: Complements,
-    compound: Compound
+    compound: Compound,
+    missing_graphemes: MissingGraphemes
   }
 
   @spec solve(Lexicon.t(), String.t(), atom()) :: {:ok | :error, Lexicon.t()}

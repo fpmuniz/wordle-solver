@@ -1,5 +1,7 @@
 defmodule Linguistics.Lexicon do
-  @type t :: [String.t()]
+  alias Linguistics.Word
+
+  @type t :: [Word.t()]
 
   @path "lib/linguistics/lexicon"
 

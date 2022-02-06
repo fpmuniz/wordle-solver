@@ -23,7 +23,7 @@ defmodule Wordle.Strategy.MissingGraphemes do
   @spec build_scores(Lexicon.t(), Game.t()) :: Lexicon.score()
   defp build_scores(lexicon, game) do
     lexicon
-    |> Lexicon.letter_frequencies()
+    |> Lexicon.grapheme_frequencies()
     |> multiply_scores(game)
     |> Map.new()
   end

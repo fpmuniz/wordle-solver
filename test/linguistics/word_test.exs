@@ -18,6 +18,11 @@ defmodule Linguistics.WordTest do
     end
   end
 
+  describe "score/2" do
+    grapheme_scores = %{"w" => 10, "o" => 20, "r" => 5, "d" => 1}
+    assert 36 = Word.score("word", grapheme_scores)
+  end
+
   describe "valid?/2" do
     test "returns true to a valid english word" do
       assert Word.valid?("hello", :en)
@@ -25,6 +30,12 @@ defmodule Linguistics.WordTest do
 
     test "returns false to an invalid english word" do
       refute Word.valid?("こんにちは", :en)
+    end
+  end
+
+  describe "counts/1" do
+    test "returns a map of graphemes with their respective frequencies" do
+      assert %{"g" => 5, "b" => 2} = Word.counts("gggggbb")
     end
   end
 end

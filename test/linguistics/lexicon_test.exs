@@ -2,11 +2,11 @@ defmodule Linguistics.LexiconTest do
   alias Linguistics.Lexicon
   use ExUnit.Case, async: true
 
-  describe "letter_frequencies/1" do
+  describe "grapheme_frequencies/1" do
     test "returns frequencies in percentage" do
       words = ~w(abcd ab ab)
 
-      assert Lexicon.letter_frequencies(words) == %{
+      assert Lexicon.grapheme_frequencies(words) == %{
                "a" => 3,
                "b" => 3,
                "c" => 1,

@@ -2,7 +2,6 @@ defmodule Linguistics.Lexicon do
   alias Linguistics.Word
 
   @type t :: [Word.t()]
-  @type score :: %{Word.grapheme() => number()}
 
   @path "lib/linguistics/lexicon"
 
@@ -33,8 +32,8 @@ defmodule Linguistics.Lexicon do
     Enum.filter(lexicon, &(String.length(&1) == n))
   end
 
-  @spec letter_frequencies(t()) :: Word.counts()
-  def letter_frequencies(lexicon) do
+  @spec grapheme_frequencies(t()) :: Word.counts()
+  def grapheme_frequencies(lexicon) do
     lexicon
     |> Enum.map(&Word.counts/1)
     |> Enum.reduce(%{}, fn counts, acc ->
@@ -45,28 +44,19 @@ defmodule Linguistics.Lexicon do
 
   @spec order_by_scores(t()) :: t()
   def order_by_scores(lexicon) do
-    scores = letter_frequencies(lexicon)
+    scores = grapheme_frequencies(lexicon)
     order_by_scores(lexicon, scores)
   end
 
-  @spec order_by_scores(t(), score()) :: t()
-  def order_by_scores(lexicon, letter_frequencies) do
+  @spec order_by_scores(t(), Linguistics.scores()) :: t()
+  def order_by_scores(lexicon, grapheme_frequencies) do
     lexicon
     |> Enum.map(fn word ->
-      {word, word_score(word, letter_frequencies)}
+      {word, Word.score(word, grapheme_frequencies)}
     end)
     |> Map.new()
     |> Enum.sort_by(&elem(&1, 1), :desc)
     |> Enum.map(&elem(&1, 0))
-  end
-
-  defp word_score(word, letter_frequencies) do
-    word
-    |> String.graphemes()
-    |> Enum.uniq()
-    |> Enum.reduce(0, fn letter, acc_score ->
-      acc_score + Map.get(letter_frequencies, letter)
-    end)
   end
 
   @spec export(t(), String.t()) :: :ok

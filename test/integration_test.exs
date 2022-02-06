@@ -25,7 +25,6 @@ defmodule IntegrationTest do
   ]
 
   describe "Wordle.solve/3 with `complements` strategy" do
-    @tag :wip
     test "succeeds 1825 times with wordle lexicon" do
       assert @average[:wordle][Complements] == count_successes("wordle", Complements)
     end

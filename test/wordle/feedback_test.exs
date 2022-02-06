@@ -39,37 +39,6 @@ defmodule Wordle.FeedbackTest do
     end
   end
 
-  # describe "maxmin/2" do
-  #   test "works as expected when there is no grapheme repetition" do
-  #     # right word: 'words'; guessed word: 'dwarf'
-
-  #     counts = Feedback.maxmin("dwarf", "11010")
-  #     assert counts["d"] == [max: 5, min: 1]
-  #     assert counts["w"] == [max: 5, min: 1]
-  #     assert counts["a"] == [max: 0, min: 0]
-  #     assert counts["r"] == [max: 5, min: 1]
-  #     assert counts["f"] == [max: 0, min: 0]
-  #   end
-
-  #   test "sets minimum count to # of graphemes repeated in guessed word" do
-  #     # right word: 'bobby'; guessed word: 'booby'
-
-  #     counts = Feedback.maxmin("booby", "22022")
-  #     assert counts["b"] == [max: 5, min: 2]
-  #     assert counts["o"] == [max: 1, min: 1]
-  #     assert counts["y"] == [max: 5, min: 1]
-  #   end
-
-  #   test "sets maximum count to # of graphemes repeated in guessed word when exceeding" do
-  #     # right word: 'booby'; guessed word: 'bobby'
-
-  #     counts = Feedback.maxmin("bobby", "22022")
-  #     assert counts["b"] == [max: 2, min: 2]
-  #     assert counts["o"] == [max: 5, min: 1]
-  #     assert counts["y"] == [max: 5, min: 1]
-  #   end
-  # end
-
   describe "filter/2" do
     test "filters words that do not comply with given feedback" do
       lexicon = ~w(small ghost doing great scare)

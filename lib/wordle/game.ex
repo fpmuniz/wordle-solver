@@ -19,7 +19,7 @@ defmodule Wordle.Game do
   @type counts :: %{Word.grapheme() => integer()}
   @type classification :: :unknown | :wrong | :misplaced | :correct
 
-  @default_valid_graphemes Language.valid_graphemes(:en)
+  @default_valid_graphemes Language.En.valid_graphemes()
 
   defstruct [
     :right_word,
@@ -33,11 +33,10 @@ defmodule Wordle.Game do
   def new(wordlist, right_word, valid_graphemes \\ @default_valid_graphemes) do
     :ok = check_word_validity(wordlist, right_word)
 
-    %{}
+    %Game{}
     |> Map.put(:wordlist, wordlist)
     |> Map.put(:right_word, right_word)
     |> Map.put(:graphemes, build_graphemes(valid_graphemes))
-    |> (fn params -> struct!(Game, params) end).()
   end
 
   @spec guess(t(), String.t()) :: t()

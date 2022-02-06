@@ -22,9 +22,9 @@ defmodule Linguistics.Lexicon do
     Enum.map(lexicon, &String.trim/1)
   end
 
-  @spec filter_valid(t(), Linguistics.language()) :: t()
-  def filter_valid(lexicon, language \\ :en) do
-    Enum.filter(lexicon, &Word.valid?(&1, language))
+  @spec filter_valid(t(), [Word.grapheme()]) :: t()
+  def filter_valid(lexicon, valid_graphemes) do
+    Enum.filter(lexicon, &Word.valid?(&1, valid_graphemes))
   end
 
   @spec filter_by_length(t(), integer()) :: t()

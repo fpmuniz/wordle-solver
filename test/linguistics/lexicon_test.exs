@@ -1,6 +1,6 @@
 defmodule Linguistics.LexiconTest do
-  alias Linguistics.Lexicon
   use ExUnit.Case, async: true
+  alias Linguistics.Lexicon
 
   describe "grapheme_frequencies/1" do
     test "returns frequencies in percentage" do
@@ -62,12 +62,14 @@ defmodule Linguistics.LexiconTest do
   describe "filter_valid/1" do
     test "removes words with uppercase letters" do
       words = ~w(Texas AC DC hello)
-      assert Lexicon.filter_valid(words) == ~w(hello)
+      lowercase = ?a..?z |> Enum.to_list() |> List.to_string() |> String.codepoints()
+      assert Lexicon.filter_valid(words, lowercase) == ~w(hello)
     end
 
     test "removes words with symbols" do
       words = ~w(don't can't st. valid word)
-      assert Lexicon.filter_valid(words) == ~w(valid word)
+      valid_graphemes = ?a..?z |> Enum.to_list() |> List.to_string() |> String.codepoints()
+      assert Lexicon.filter_valid(words, valid_graphemes) == ~w(valid word)
     end
   end
 

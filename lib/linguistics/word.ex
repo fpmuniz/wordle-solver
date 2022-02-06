@@ -1,8 +1,7 @@
 defmodule Linguistics.Word do
-  alias Linguistics.Language
-
   @type t :: String.t()
   @type grapheme :: String.t()
+  @type counts :: %{grapheme() => integer()}
 
   @spec uniq(t()) :: t()
   def uniq(word) do
@@ -12,7 +11,7 @@ defmodule Linguistics.Word do
     |> Enum.join()
   end
 
-  @spec counts(t()) :: Linguistics.counts()
+  @spec counts(t()) :: counts()
   def counts(word) do
     word
     |> String.graphemes()
@@ -36,10 +35,8 @@ defmodule Linguistics.Word do
     |> Enum.reduce(acc, fun)
   end
 
-  @spec valid?(t(), Language.t()) :: boolean()
-  def valid?(word, language) do
-    valid_graphemes = Language.valid_graphemes(language)
-
+  @spec valid?(t(), [grapheme()]) :: boolean()
+  def valid?(word, valid_graphemes) do
     reduce(word, true, fn grapheme, acc ->
       acc and grapheme in valid_graphemes
     end)

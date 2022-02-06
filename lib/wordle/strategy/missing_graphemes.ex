@@ -20,7 +20,7 @@ defmodule Wordle.Strategy.MissingGraphemes do
     |> solve(game)
   end
 
-  @spec build_scores(Lexicon.t(), Game.t()) :: Lexicon.score()
+  @spec build_scores(Lexicon.t(), Game.t()) :: Linguistics.scores()
   defp build_scores(lexicon, game) do
     lexicon
     |> Lexicon.grapheme_frequencies()
@@ -28,7 +28,7 @@ defmodule Wordle.Strategy.MissingGraphemes do
     |> Map.new()
   end
 
-  @spec multiply_scores(Lexicon.score(), Game.t()) :: Lexicon.score()
+  @spec multiply_scores(Linguistics.scores(), Game.t()) :: Linguistics.scores()
   defp multiply_scores(scores, game) do
     scores
     |> Enum.map(fn {grapheme, score} ->

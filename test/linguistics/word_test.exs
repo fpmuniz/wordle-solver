@@ -25,11 +25,13 @@ defmodule Linguistics.WordTest do
 
   describe "valid?/2" do
     test "returns true to a valid english word" do
-      assert Word.valid?("hello", :en)
+      valid_graphemes = ~w(e h l o)
+      assert Word.valid?("hello", valid_graphemes)
     end
 
     test "returns false to an invalid english word" do
-      refute Word.valid?("こんにちは", :en)
+      valid_graphemes = ~w(a b c)
+      refute Word.valid?("こんにちは", valid_graphemes)
     end
   end
 

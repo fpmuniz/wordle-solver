@@ -3,6 +3,7 @@ defmodule Linguistics.Word do
 
   @type t :: String.t()
   @type grapheme :: String.t()
+  @type counts :: %{grapheme() => integer()}
 
   @spec uniq(t()) :: t()
   def uniq(word) do
@@ -10,6 +11,13 @@ defmodule Linguistics.Word do
     |> String.graphemes()
     |> Enum.uniq()
     |> Enum.join()
+  end
+
+  @spec counts(t()) :: counts()
+  def counts(word) do
+    word
+    |> String.graphemes()
+    |> Enum.frequencies()
   end
 
   @spec reduce(t(), any(), (grapheme(), any() -> any())) :: any()

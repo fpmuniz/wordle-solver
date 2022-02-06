@@ -3,17 +3,17 @@ defmodule Wordle.Game do
   alias Wordle.Feedback
   alias Linguistics.Language
   alias Linguistics.Lexicon
-  alias Linguistics.Grapheme
+  alias Linguistics.Word
 
   @type t :: %Game{
           guesses: Lexicon.t(),
-          feedbacks: Lexicon.t(),
+          feedbacks: [Feedback.t()],
           right_word: String.t(),
           wordlist: Lexicon.t(),
-          graphemes: %{Grapheme.t() => classification()}
+          graphemes: %{Word.grapheme() => classification()}
         }
-  @type counts :: %{Grapheme.t() => integer()}
-  @type classification :: :unknown | :invalid | :misplaced | :correct
+  @type counts :: %{Word.grapheme() => integer()}
+  @type classification :: :unknown | :wrong | :misplaced | :correct
 
   @default_valid_graphemes Language.valid_graphemes(:en)
 
@@ -25,7 +25,7 @@ defmodule Wordle.Game do
     feedbacks: []
   ]
 
-  @spec new(Lexicon.t(), String.t(), [Grapheme.t()]) :: t()
+  @spec new(Lexicon.t(), String.t(), [Word.grapheme()]) :: t()
   def new(wordlist, right_word, valid_graphemes \\ @default_valid_graphemes) do
     case right_word in wordlist do
       true ->
@@ -56,7 +56,7 @@ defmodule Wordle.Game do
     %{game | guesses: [guess | game.guesses]}
   end
 
-  @spec put_feedback(t(), String.t()) :: t()
+  @spec put_feedback(t(), Feedback.t()) :: t()
   defp put_feedback(game, feedback) do
     %{game | feedbacks: [feedback | game.feedbacks]}
   end
@@ -65,31 +65,25 @@ defmodule Wordle.Game do
   defp organize_graphemes(
          %Game{graphemes: graphemes, guesses: [guess | _], feedbacks: [feedback | _]} = game
        ) do
-    guess = String.graphemes(guess)
-    feedback = String.graphemes(feedback)
+    guess_graphemes = String.graphemes(guess)
 
-    [feedback, guess]
-    |> Enum.zip()
-    |> Enum.reduce(graphemes, fn {correctness, grapheme}, acc ->
-      case correctness do
-        "0" ->
-          status = Map.get(acc, grapheme)
-          new_status = if status == :unknown, do: :invalid, else: status
-          Map.put(acc, grapheme, new_status)
+    graphemes =
+      [guess_graphemes, feedback]
+      |> Enum.zip()
+      |> Enum.reduce(graphemes, fn {grapheme, correctness}, acc ->
+        status = Map.get(acc, grapheme)
+        new_status = update_status(status, correctness)
+        Map.put(acc, grapheme, new_status)
+      end)
 
-        "1" ->
-          status = Map.get(acc, grapheme)
-          new_status = if status == :unknown, do: :misplaced, else: status
-          Map.put(acc, grapheme, new_status)
-
-        "2" ->
-          status = Map.get(acc, grapheme)
-          new_status = if status in [:unknown, :misplaced], do: :correct, else: status
-          Map.put(acc, grapheme, new_status)
-      end
-    end)
-    |> (fn graphemes -> %{game | graphemes: graphemes} end).()
+    %{game | graphemes: graphemes}
   end
+
+  @spec update_status(classification(), classification()) :: classification()
+  defp update_status(status, correctness)
+  defp update_status(:unknown, correctness), do: correctness
+  defp update_status(:misplaced, :correct), do: :correct
+  defp update_status(status, _), do: status
 
   @spec check_word_validity(t(), String.t()) :: :ok
   defp check_word_validity(game, guess) do
@@ -106,7 +100,7 @@ defmodule Wordle.Game do
     end
   end
 
-  @spec build_graphemes([Grapheme.t()]) :: %{Grapheme.t() => classification()}
+  @spec build_graphemes([Word.grapheme()]) :: %{Word.grapheme() => classification()}
   defp build_graphemes(graphemes) do
     graphemes
     |> Enum.map(fn grapheme ->

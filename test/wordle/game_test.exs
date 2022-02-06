@@ -14,11 +14,12 @@ defmodule Wordle.GameTest do
   end
 
   describe "guess/2" do
-    test "returns a string of 0, 1 and 2 as feedback for a guessed word" do
+    test "returns a new game with a new feedback and latest guess included in its history" do
       word = "word"
       game = Game.new(~w(some word gone), word)
-      assert %Game{feedbacks: ["0200" | _]} = game = Game.guess(game, "some")
-      assert ["some"] = game.guesses
+      expected_feedback = [:wrong, :correct, :wrong, :wrong]
+      assert %Game{feedbacks: [^expected_feedback | _]} = game = Game.guess(game, "some")
+      assert ["some" | _] = game.guesses
     end
 
     test "raises in case of length mismatch" do

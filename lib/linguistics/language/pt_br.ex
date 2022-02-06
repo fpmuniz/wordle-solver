@@ -1,5 +1,5 @@
 defmodule Linguistics.Language.PtBr do
-  alias Linguistics.Grapheme
+  alias Linguistics.Word
 
   @behaviour Linguistics.Language
 
@@ -25,7 +25,7 @@ defmodule Linguistics.Language.PtBr do
   end
 
   @impl true
-  @spec valid_graphemes() :: [Grapheme.t()]
+  @spec valid_graphemes() :: [Word.grapheme()]
   def valid_graphemes() do
     ?a..?z
     |> Enum.to_list()
@@ -33,7 +33,7 @@ defmodule Linguistics.Language.PtBr do
     |> String.codepoints()
   end
 
-  @spec replace_accent(Grapheme.t()) :: Grapheme.t()
+  @spec replace_accent(Word.grapheme()) :: Word.grapheme()
   defp replace_accent(l) when l in @a_accents, do: "a"
   defp replace_accent(l) when l in @c_accents, do: "c"
   defp replace_accent(l) when l in @e_accents, do: "e"

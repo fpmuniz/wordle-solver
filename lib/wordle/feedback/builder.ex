@@ -1,22 +1,24 @@
 defmodule Wordle.Feedback.Builder do
   alias Wordle.Feedback.Builder
-  alias Linguistics.Grapheme
+  alias Wordle.Feedback
+  alias Linguistics.Word
+  alias Wordle.Game
 
   defstruct [:acc, :counts, :right_word, :guessed_word, :size, position: 0]
 
   @type t :: %Builder{
-          counts: Grapheme.counts(),
+          counts: Word.counts(),
           right_word: String.t(),
           guessed_word: String.t(),
-          acc: [Grapheme.t()],
+          acc: Feedback.t(),
           position: integer(),
           size: integer()
         }
 
   @spec new(String.t(), String.t()) :: t()
   def new(right_word, guessed_word) do
-    counts = Grapheme.counts(right_word)
-    acc = right_word |> String.graphemes() |> Enum.map(fn _grapheme -> "0" end)
+    counts = Word.counts(right_word)
+    acc = right_word |> String.graphemes() |> Enum.map(fn _grapheme -> :wrong end)
 
     %Builder{
       right_word: right_word,
@@ -36,7 +38,7 @@ defmodule Wordle.Feedback.Builder do
 
     grapheme
     |> case do
-      ^right_grapheme -> feedback |> decrease_count(grapheme) |> put_answer("2")
+      ^right_grapheme -> feedback |> decrease_count(grapheme) |> put_answer(:correct)
       _ -> feedback
     end
     |> next_position()
@@ -51,16 +53,16 @@ defmodule Wordle.Feedback.Builder do
 
     case get_count(feedback, grapheme) do
       0 -> feedback
-      _ -> feedback |> decrease_count(grapheme) |> put_answer("1")
+      _ -> feedback |> decrease_count(grapheme) |> put_answer(:misplaced)
     end
     |> next_position()
     |> partial_matches()
   end
 
-  @spec as_string(t()) :: String.t()
-  def as_string(feedback), do: feedback |> Map.get(:acc) |> Enum.join()
+  @spec get_feedback(t()) :: Feedback.t()
+  def get_feedback(feedback), do: feedback |> Map.get(:acc)
 
-  @spec decrease_count(t(), Grapheme.t()) :: t()
+  @spec decrease_count(t(), Word.grapheme()) :: t()
   defp decrease_count(feedback, grapheme) do
     count = get_count(feedback, grapheme)
 
@@ -69,7 +71,7 @@ defmodule Wordle.Feedback.Builder do
     |> update_counts(feedback)
   end
 
-  @spec increase_count(t(), Grapheme.t()) :: t()
+  @spec increase_count(t(), Word.grapheme()) :: t()
   defp increase_count(%Builder{} = feedback, grapheme) do
     count = get_count(feedback, grapheme)
 
@@ -78,25 +80,25 @@ defmodule Wordle.Feedback.Builder do
     |> update_counts(feedback)
   end
 
-  @spec get_count(t(), Grapheme.t()) :: integer()
+  @spec get_count(t(), Word.grapheme()) :: integer()
   defp get_count(feedback, grapheme) do
     Map.get(feedback.counts, grapheme, 0)
   end
 
-  @spec update_counts(Grapheme.counts(), t()) :: t()
+  @spec update_counts(Word.counts(), t()) :: t()
   defp update_counts(new_counts, feedback) do
     Map.put(feedback, :counts, new_counts)
   end
 
-  @spec put_answer(t(), Grapheme.t()) :: t()
-  defp put_answer(feedback, one_or_two) when one_or_two in ~w(1 2) do
+  @spec put_answer(t(), Game.classification()) :: t()
+  defp put_answer(feedback, classification) when classification in [:misplaced, :correct] do
     position = feedback.position
     curr = Enum.at(feedback.acc, position)
     grapheme = String.at(feedback.right_word, position)
 
     {feedback, acc} =
       case curr do
-        "0" -> {feedback, feedback.acc |> List.replace_at(position, one_or_two)}
+        :wrong -> {feedback, feedback.acc |> List.replace_at(position, classification)}
         _ -> {increase_count(feedback, grapheme), feedback.acc}
       end
 

@@ -1,7 +1,6 @@
 defmodule Wordle.Strategy.MissingGraphemes do
   alias Wordle.Game
   alias Wordle.Feedback
-  alias Linguistics.Grapheme
   alias Linguistics.Lexicon
 
   @behaviour Wordle.Strategy
@@ -13,7 +12,7 @@ defmodule Wordle.Strategy.MissingGraphemes do
 
   def solve(lexicon, game) do
     scores = build_scores(lexicon, game)
-    [guess | _] = lexicon = Grapheme.order_by_scores(lexicon, scores)
+    [guess | _] = lexicon = Lexicon.order_by_scores(lexicon, scores)
     %{feedbacks: [feedback | _]} = game = Game.guess(game, guess)
 
     lexicon
@@ -21,21 +20,21 @@ defmodule Wordle.Strategy.MissingGraphemes do
     |> solve(game)
   end
 
-  @spec build_scores(Lexicon.t(), Game.t()) :: Grapheme.score()
+  @spec build_scores(Lexicon.t(), Game.t()) :: Lexicon.score()
   defp build_scores(lexicon, game) do
     lexicon
-    |> Grapheme.letter_frequencies()
+    |> Lexicon.letter_frequencies()
     |> multiply_scores(game)
     |> Map.new()
   end
 
-  @spec multiply_scores(Grapheme.score(), Game.t()) :: Grapheme.score()
+  @spec multiply_scores(Lexicon.score(), Game.t()) :: Lexicon.score()
   defp multiply_scores(scores, game) do
     scores
     |> Enum.map(fn {grapheme, score} ->
       case game.graphemes[grapheme] do
         :unknown -> {grapheme, score}
-        :invalid -> {grapheme, 0}
+        :wrong -> {grapheme, 0}
         :misplaced -> {grapheme, score}
         :correct -> {grapheme, 0}
       end

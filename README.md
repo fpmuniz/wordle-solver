@@ -29,7 +29,7 @@ iex> |> Lexicon.trim()                     # trims all trailing whitespace
 iex> |> Language.normalize(:pt_br)        # removes accents and diacritics
 iex> |> Lexicon.filter_by_number_of_graphenes(5) # drops words with 6+ or 4- letters
 iex> |> Lexicon.filter_valid()             # removes words that aren't exclusively lowcase a-z
-iex> |> Grapheme.order_by_scores()       # calculates each word's score based on how many good letters it has and then sorts in desc score order
+iex> |> Lexicon.order_by_scores()       # calculates each word's score based on how many good letters it has and then sorts in desc score order
 ["rosea", "serao", "roias", "roais", "raios", "orais", "raies", "areis",
  "aires", "seria", "sarei", "reais", "eiras", "meiao", "moera", "aremo",
  "remoa", "aureo", "ecoai", "ecoar", "ateio", "terao", "rotea", "reato",

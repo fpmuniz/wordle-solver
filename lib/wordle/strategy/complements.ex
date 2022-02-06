@@ -1,7 +1,7 @@
 defmodule Wordle.Strategy.Complements do
   alias Wordle.Feedback
   alias Wordle.Game
-  alias Linguistics.Grapheme
+  alias Linguistics.Word
   alias Linguistics.Lexicon
 
   @behaviour Wordle.Strategy
@@ -27,7 +27,7 @@ defmodule Wordle.Strategy.Complements do
 
     lexicon
     |> Feedback.filter(guess, feedback)
-    |> Grapheme.order_by_scores()
+    |> Lexicon.order_by_scores()
     |> solve(game, tl)
   end
 
@@ -42,7 +42,7 @@ defmodule Wordle.Strategy.Complements do
     |> get_best_words([hd | best_words])
   end
 
-  @spec reject_grapheme(Lexicon.t(), Grapheme.t()) :: Lexicon.t()
+  @spec reject_grapheme(Lexicon.t(), Word.grapheme()) :: Lexicon.t()
   defp reject_grapheme(lexicon, grapheme) do
     Enum.reject(lexicon, &String.contains?(&1, grapheme))
   end

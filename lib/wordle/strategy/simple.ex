@@ -1,7 +1,6 @@
 defmodule Wordle.Strategy.Simple do
   alias Wordle.Feedback
   alias Wordle.Game
-  alias Linguistics.Grapheme
   alias Linguistics.Lexicon
 
   @behaviour Wordle.Strategy
@@ -17,7 +16,7 @@ defmodule Wordle.Strategy.Simple do
 
     lexicon
     |> Feedback.filter(guess, feedback)
-    |> Grapheme.order_by_scores()
+    |> Lexicon.order_by_scores()
     |> solve(game)
   end
 end

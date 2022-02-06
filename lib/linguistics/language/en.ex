@@ -1,10 +1,10 @@
 defmodule Linguistics.Language.En do
-  alias Linguistics.Grapheme
+  alias Linguistics.Word
 
   @behaviour Linguistics.Language
 
   @impl true
-  @spec valid_graphemes() :: [Grapheme.t()]
+  @spec valid_graphemes() :: [Word.grapheme()]
   def valid_graphemes() do
     ?a..?z
     |> Enum.to_list()

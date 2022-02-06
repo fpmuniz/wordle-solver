@@ -1,7 +1,7 @@
 defmodule Linguistics.Language do
   alias Linguistics.Language.En
   alias Linguistics.Language.PtBr
-  alias Linguistics.Grapheme
+  alias Linguistics.Word
   alias Linguistics.Lexicon
 
   @type t :: :en | :pt_br
@@ -12,7 +12,7 @@ defmodule Linguistics.Language do
   }
 
   @callback normalize(word :: String.t()) :: String.t()
-  @callback valid_graphemes() :: [Grapheme.t()]
+  @callback valid_graphemes() :: [Word.grapheme()]
 
   @spec normalize(Lexicon.t(), t()) :: Lexicon.t()
   def normalize(lexicon, language) do
@@ -21,7 +21,7 @@ defmodule Linguistics.Language do
     Enum.map(lexicon, &module.normalize/1)
   end
 
-  @spec valid_graphemes(t()) :: [Grapheme.t()]
+  @spec valid_graphemes(t()) :: [Word.grapheme()]
   def valid_graphemes(language) do
     module = get_language!(language)
     module.valid_graphemes()

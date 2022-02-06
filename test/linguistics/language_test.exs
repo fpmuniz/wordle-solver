@@ -1,4 +1,4 @@
-defmodule LanguageTest do
+defmodule Linguistics.LanguageTest do
   alias Linguistics.Language
   use ExUnit.Case, async: true
 

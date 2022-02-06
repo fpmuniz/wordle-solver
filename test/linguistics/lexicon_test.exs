@@ -1,4 +1,4 @@
-defmodule LexiconTest do
+defmodule Linguistics.LexiconTest do
   alias Linguistics.Lexicon
   use ExUnit.Case, async: true
 
@@ -12,6 +12,13 @@ defmodule LexiconTest do
                "c" => 1,
                "d" => 1
              }
+    end
+  end
+
+  describe "order_by_scores/1" do
+    test "rearranges lexicon by calculating scores by itself when not provided" do
+      lexicon = ~w(done come mice)
+      assert ~w(come mice done) == Lexicon.order_by_scores(lexicon)
     end
   end
 
@@ -68,13 +75,6 @@ defmodule LexiconTest do
     test "successfully imports a list of words from a given lexicon name" do
       lexicon = Lexicon.import("test")
       assert is_list(lexicon)
-    end
-  end
-
-  describe "order_by_scores/1" do
-    test "rearranges lexicon based on graphemes scores" do
-      lexicon = ~w(done come mice)
-      assert ~w(come mice done) == Lexicon.order_by_scores(lexicon)
     end
   end
 

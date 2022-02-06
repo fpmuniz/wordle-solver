@@ -59,8 +59,8 @@ defmodule Wordle.Feedback.Builder do
     |> partial_matches()
   end
 
-  @spec get_feedback(t()) :: Feedback.t()
-  def get_feedback(feedback), do: feedback |> Map.get(:acc)
+  @spec get_result(t()) :: Feedback.t()
+  def get_result(feedback), do: feedback |> Map.get(:acc)
 
   @spec decrease_count(t(), Word.grapheme()) :: t()
   defp decrease_count(feedback, grapheme) do

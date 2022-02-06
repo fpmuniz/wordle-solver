@@ -12,7 +12,7 @@ defmodule Wordle.Feedback do
     |> Builder.new(guessed_word)
     |> Builder.exact_matches()
     |> Builder.partial_matches()
-    |> Builder.get_feedback()
+    |> Builder.get_result()
   end
 
   @spec filter(Lexicon.t(), t()) :: Lexicon.t()

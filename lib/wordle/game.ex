@@ -5,6 +5,10 @@ defmodule Wordle.Game do
   alias Linguistics.Lexicon
   alias Linguistics.Word
 
+  defmodule NotInWordList do
+    defexception [:message]
+  end
+
   @type t :: %Game{
           guesses: Lexicon.t(),
           feedbacks: [Feedback.t()],
@@ -27,22 +31,18 @@ defmodule Wordle.Game do
 
   @spec new(Lexicon.t(), String.t(), [Word.grapheme()]) :: t()
   def new(wordlist, right_word, valid_graphemes \\ @default_valid_graphemes) do
-    case right_word in wordlist do
-      true ->
-        %{}
-        |> Map.put(:wordlist, wordlist)
-        |> Map.put(:right_word, right_word)
-        |> Map.put(:graphemes, build_graphemes(valid_graphemes))
-        |> (fn params -> struct!(Game, params) end).()
+    :ok = check_word_validity(wordlist, right_word)
 
-      false ->
-        raise ArgumentError, "'#{right_word}' must be in wordlist."
-    end
+    %{}
+    |> Map.put(:wordlist, wordlist)
+    |> Map.put(:right_word, right_word)
+    |> Map.put(:graphemes, build_graphemes(valid_graphemes))
+    |> (fn params -> struct!(Game, params) end).()
   end
 
   @spec guess(t(), String.t()) :: t()
   def guess(game, guess) do
-    :ok = check_word_validity(game, guess)
+    :ok = check_word_validity(game.wordlist, guess)
     feedback = Feedback.build(game.right_word, guess)
 
     game
@@ -80,23 +80,17 @@ defmodule Wordle.Game do
   end
 
   @spec update_status(classification(), classification()) :: classification()
-  defp update_status(status, correctness)
-  defp update_status(:unknown, correctness), do: correctness
-  defp update_status(:misplaced, :correct), do: :correct
-  defp update_status(status, _), do: status
+  def update_status(status, correctness)
+  def update_status(:unknown, correctness), do: correctness
+  def update_status(:misplaced, :correct), do: :correct
+  def update_status(status, _), do: status
 
-  @spec check_word_validity(t(), String.t()) :: :ok
-  defp check_word_validity(game, guess) do
-    cond do
-      guess not in game.wordlist ->
-        raise ArgumentError, "'#{guess}' is not in wordlist"
-
-      String.length(game.right_word) != String.length(guess) ->
-        raise ArgumentError,
-              "guessed word '#{guess}' should have been #{String.length(game.right_word)} characters long."
-
-      true ->
-        :ok
+  @spec check_word_validity(Lexicon.t(), String.t()) :: :ok
+  defp check_word_validity(lexicon, guess) do
+    if guess in lexicon do
+      :ok
+    else
+      raise NotInWordList, "'#{guess}' is not in wordlist"
     end
   end
 

@@ -70,7 +70,7 @@ defmodule Wordle.FeedbackTest do
   #   end
   # end
 
-  describe "feedback/2" do
+  describe "filter/2" do
     test "filters words that do not comply with given feedback" do
       lexicon = ~w(small ghost doing great scare)
       feedback = [:wrong, :misplaced, :misplaced, :misplaced, :wrong]
@@ -80,8 +80,14 @@ defmodule Wordle.FeedbackTest do
 
     test "uses first word on the list when a word isn't given" do
       lexicon = ~w(small ghost doing great scare)
-      feedback = [:wrong, :misplaced, :misplaced, :misplaced, :wrong]
-      assert ["scare"] = Feedback.filter(lexicon, "great", feedback)
+      feedback = [:correct, :wrong, :correct, :wrong, :wrong]
+      assert ["scare"] = Feedback.filter(lexicon, feedback)
+    end
+
+    test "does nothing to an empty list" do
+      lexicon = []
+      feedback = [:correct, :correct, :wrong, :misplaced]
+      assert [] = Feedback.filter(lexicon, feedback)
     end
   end
 end

@@ -71,9 +71,11 @@ defmodule Linguistics.Lexicon do
 
   @spec export(t(), String.t()) :: :ok
   def export(lexicon, name) do
-    lexicon
-    |> Enum.join("\n")
-    |> String.trim()
-    |> (&File.write!("#{@path}/#{name}.txt", &1)).()
+    string =
+      lexicon
+      |> Enum.join("\n")
+      |> String.trim()
+
+    File.write!("#{@path}/#{name}.txt", string)
   end
 end

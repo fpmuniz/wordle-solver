@@ -63,4 +63,26 @@ defmodule LexiconTest do
       assert Lexicon.filter_valid(words) == ~w(valid word)
     end
   end
+
+  describe "import/1" do
+    test "successfully imports a list of words from a given lexicon name" do
+      lexicon = Lexicon.import("test")
+      assert is_list(lexicon)
+    end
+  end
+
+  describe "order_by_scores/1" do
+    test "rearranges lexicon based on graphemes scores" do
+      lexicon = ~w(done come mice)
+      assert ~w(come mice done) == Lexicon.order_by_scores(lexicon)
+    end
+  end
+
+  describe "write/2" do
+    test "writes a list of words into a file" do
+      lexicon = ~w(done come mice)
+      assert :ok = Lexicon.export(lexicon, "tmp")
+      assert :ok = File.rm!("lib/linguistics/lexicon/tmp.txt")
+    end
+  end
 end

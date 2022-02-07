@@ -22,4 +22,8 @@ defmodule Wordle.Strategy.Random do
     |> Feedback.filter(guess, feedback)
     |> solve(game)
   end
+
+  @impl true
+  @spec sort(Lexicon.t()) :: Lexicon.t()
+  def sort(lexicon), do: lexicon
 end

@@ -4,8 +4,6 @@ defmodule Wordle.Strategy.MaxMinGraphTest do
   alias Wordle.Feedback
   alias Wordle.Game
 
-  @moduletag :wip
-
   describe "all_possible_feedbacks/1" do
     test "shows all permutations of feedback classifications" do
       permutations = MaxMinGraph.all_possible_feedbacks(5)
@@ -47,7 +45,7 @@ defmodule Wordle.Strategy.MaxMinGraphTest do
 
   describe "solve/2" do
     test "solves a simple game with a small number of words" do
-      lexicon = ~w(word size give take done gone)
+      lexicon = ~w(word size give take done gone) |> MaxMinGraph.sort()
       game = Game.new(lexicon, "word")
 
       assert {:ok, game, _lexicon} = MaxMinGraph.solve(lexicon, game)

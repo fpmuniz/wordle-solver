@@ -20,6 +20,9 @@ defmodule Wordle.Strategy.MissingGraphemes do
     |> solve(game)
   end
 
+  @impl true
+  def sort(lexicon), do: Lexicon.order_by_scores(lexicon)
+
   @spec build_scores(Lexicon.t(), Game.t()) :: Linguistics.scores()
   defp build_scores(lexicon, game) do
     lexicon

@@ -6,4 +6,5 @@ defmodule Wordle.Strategy do
   @type scores :: %{Word.grapheme() => number()}
 
   @callback solve(Lexicon.t(), Game.t()) :: {:ok | :error, Game.t(), Lexicon.t()}
+  @callback sort(Lexicon.t()) :: Lexicon.t()
 end

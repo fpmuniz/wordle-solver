@@ -16,7 +16,11 @@ defmodule Wordle.Strategy.Simple do
 
     lexicon
     |> Feedback.filter(guess, feedback)
-    |> Lexicon.order_by_scores()
+    |> sort()
     |> solve(game)
   end
+
+  @impl true
+  @spec sort(Lexicon.t()) :: Lexicon.t()
+  def sort(lexicon), do: Lexicon.order_by_scores(lexicon)
 end

@@ -6,6 +6,8 @@ defmodule IntegrationTest do
   alias Wordle.Strategy.Simple
   alias Wordle.Strategy.MissingGraphemes
   alias Wordle.Strategy.Random
+  alias Wordle.Strategy.MaxMinGraph
+  alias Wordle.Strategy.MinDepth
   alias Wordle.Game
 
   @moduletag :integration
@@ -14,12 +16,14 @@ defmodule IntegrationTest do
       Compound => 3.76414686825054,
       Simple => 3.687257019438445,
       MissingGraphemes => 3.687257019438445,
+      MaxMinGraph => 3.6548596112311014,
       Complements => 1825
     },
     termo: %{
       Compound => 3.615902140672783,
       Simple => 3.6055045871559632,
       MissingGraphemes => 3.6055045871559632,
+      MaxMinGraph => 3.5192660550458714,
       Complements => 788
     }
   ]
@@ -44,6 +48,18 @@ defmodule IntegrationTest do
     end
   end
 
+  describe "Wordle.solve/3 with MaxMinGraph strategy" do
+    @tag timeout: :infinity
+    test "solves all words in wordle dict with 6 or less attempts" do
+      check_stats(:wordle, 8, MaxMinGraph)
+    end
+
+    @tag timeout: :infinity
+    test "solves all words in termo dict with 6 or less attempts" do
+      check_stats(:termo, 7, MaxMinGraph)
+    end
+  end
+
   describe "Wordle.solve/3 with `compound` strategy" do
     test "solves all words in wordle dict with 8 or less attempts" do
       check_stats(:wordle, 8, Compound)
@@ -61,6 +77,20 @@ defmodule IntegrationTest do
 
     test "solves all words in termo dict with 9 or less attempts" do
       check_stats(:termo, 9, MissingGraphemes)
+    end
+  end
+
+  describe "Wordle.solve/3 with MinDepth strategy" do
+    @describetag :wip
+
+    @tag timeout: :infinity
+    test "solves all words in wordle dict with 8 or less attempts" do
+      check_stats(:wordle, 20, MinDepth)
+    end
+
+    @tag timeout: :infinity
+    test "solves all words in termo dict with 9 or less attempts" do
+      check_stats(:termo, 20, MinDepth)
     end
   end
 
@@ -88,7 +118,7 @@ defmodule IntegrationTest do
 
   @spec full_dict_stats(String.t(), integer(), module()) :: %{integer() => integer()}
   defp full_dict_stats(dict_name, max_guesses, strategy) do
-    lexicon = Lexicon.import(dict_name)
+    lexicon = dict_name |> Lexicon.import()
 
     lexicon
     |> Task.async_stream(

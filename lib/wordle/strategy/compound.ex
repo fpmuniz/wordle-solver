@@ -12,4 +12,8 @@ defmodule Wordle.Strategy.Compound do
       Strategy.Simple.solve(lexicon, game)
     end
   end
+
+  @impl true
+  @spec sort(Lexicon.t()) :: Lexicon.t()
+  def sort(lexicon), do: Lexicon.order_by_scores(lexicon)
 end

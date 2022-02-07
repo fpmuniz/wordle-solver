@@ -27,9 +27,12 @@ defmodule Wordle.Strategy.Complements do
 
     lexicon
     |> Feedback.filter(guess, feedback)
-    |> Lexicon.order_by_scores()
+    |> sort()
     |> solve(game, tl)
   end
+
+  @impl true
+  def sort(lexicon), do: Lexicon.order_by_scores(lexicon)
 
   @spec get_best_words(Lexicon.t(), Lexicon.t()) :: Lexicon.t()
   defp get_best_words(lexicon, best_words \\ [])
